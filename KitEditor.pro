@@ -24,11 +24,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-        main.cpp \
-        kiteditor.cpp
+    main.cpp \
+    kiteditorview.cpp \
+    kitmgr.cpp
 
 HEADERS += \
-        kiteditor.h
+    kiteditorview.h \
+    single.h \
+    kitmgr.h \
+    kitmodel.h
 
 FORMS += \
-        kiteditor.ui
+    kiteditorview.ui

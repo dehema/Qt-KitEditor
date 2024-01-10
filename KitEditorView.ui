@@ -101,6 +101,12 @@ font-size:14pt;
             </property>
             <item>
              <widget class="QWidget" name="widget" native="true">
+              <property name="styleSheet">
+               <string notr="true">QWidget
+{
+	border:0px;
+}</string>
+              </property>
               <layout class="QHBoxLayout" name="horizontalLayout_4">
                <property name="spacing">
                 <number>0</number>
@@ -143,6 +149,12 @@ font-size:14pt;
                  </item>
                  <item>
                   <widget class="QLabel" name="label">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
@@ -155,8 +167,13 @@ font-size:14pt;
                      <height>16777215</height>
                     </size>
                    </property>
+                   <property name="styleSheet">
+                    <string notr="true">QLabel{
+	color:rgb(114, 118, 196);
+}</string>
+                   </property>
                    <property name="text">
-                    <string>路径:</string>
+                    <string>  路径:</string>
                    </property>
                   </widget>
                  </item>
@@ -174,6 +191,12 @@ font-size:14pt;
             </item>
             <item>
              <widget class="QWidget" name="widget_2" native="true">
+              <property name="styleSheet">
+               <string notr="true">QWidget
+{
+	border:0px;
+}</string>
+              </property>
               <layout class="QHBoxLayout" name="horizontalLayout_3">
                <property name="spacing">
                 <number>0</number>
@@ -222,8 +245,13 @@ font-size:14pt;
                       <verstretch>0</verstretch>
                      </sizepolicy>
                     </property>
+                    <property name="styleSheet">
+                     <string notr="true">QLabel{
+	color:rgb(114, 118, 196);
+}QQQ</string>
+                    </property>
                     <property name="text">
-                     <string>试剂盒名称:</string>
+                     <string>试剂盒名称: </string>
                     </property>
                    </widget>
                   </item>
@@ -242,7 +270,9 @@ font-size:14pt;
                      </size>
                     </property>
                     <property name="styleSheet">
-                     <string notr="true">QLineEidt{border:1px solid rgb(173, 175, 191);}</string>
+                     <string notr="true">QLineEdit{
+	border:1px solid rgb(173, 175, 191);
+}</string>
                     </property>
                    </widget>
                   </item>
@@ -254,8 +284,13 @@ font-size:14pt;
                       <verstretch>0</verstretch>
                      </sizepolicy>
                     </property>
+                    <property name="styleSheet">
+                     <string notr="true">QLabel{
+	color:rgb(114, 118, 196);
+}QQQ</string>
+                    </property>
                     <property name="text">
-                     <string>  全称:</string>
+                     <string>  全称: </string>
                     </property>
                    </widget>
                   </item>
@@ -274,7 +309,9 @@ font-size:14pt;
                      </size>
                     </property>
                     <property name="styleSheet">
-                     <string notr="true">QLineEidt{border:1px solid rgb(173, 175, 191);}</string>
+                     <string notr="true">QLineEdit{
+	border:1px solid rgb(173, 175, 191);
+}</string>
                     </property>
                    </widget>
                   </item>
@@ -286,8 +323,13 @@ font-size:14pt;
                       <verstretch>0</verstretch>
                      </sizepolicy>
                     </property>
+                    <property name="styleSheet">
+                     <string notr="true">QLabel{
+	color:rgb(114, 118, 196);
+}QQQ</string>
+                    </property>
                     <property name="text">
-                     <string>  反应体系:</string>
+                     <string>  反应体系: </string>
                     </property>
                    </widget>
                   </item>
@@ -306,12 +348,19 @@ font-size:14pt;
                      </size>
                     </property>
                     <property name="styleSheet">
-                     <string notr="true">QLineEidt{border:1px solid rgb(173, 175, 191);}</string>
+                     <string notr="true">QLineEdit{
+	border:1px solid rgb(173, 175, 191);
+}</string>
                     </property>
                    </widget>
                   </item>
                   <item>
                    <widget class="QLabel" name="label_8">
+                    <property name="styleSheet">
+                     <string notr="true">QLabel{
+	color:rgb(114, 118, 196);
+}QQQ</string>
+                    </property>
                     <property name="text">
                      <string>μL</string>
                     </property>
@@ -325,8 +374,13 @@ font-size:14pt;
                       <verstretch>0</verstretch>
                      </sizepolicy>
                     </property>
+                    <property name="styleSheet">
+                     <string notr="true">QLabel{
+	color:rgb(114, 118, 196);
+}QQQ</string>
+                    </property>
                     <property name="text">
-                     <string>  温控流程:</string>
+                     <string>  温控流程: </string>
                     </property>
                    </widget>
                   </item>
@@ -338,6 +392,11 @@ font-size:14pt;
                       <height>30</height>
                      </size>
                     </property>
+                    <property name="styleSheet">
+                     <string notr="true">QComboBox{
+	border:1px solid rgb(173, 175, 191);
+}</string>
+                    </property>
                    </widget>
                   </item>
                   <item>
@@ -348,8 +407,13 @@ font-size:14pt;
                       <verstretch>0</verstretch>
                      </sizepolicy>
                     </property>
+                    <property name="styleSheet">
+                     <string notr="true">QLabel{
+	color:rgb(114, 118, 196);
+}QQQ</string>
+                    </property>
                     <property name="text">
-                     <string>  机型:</string>
+                     <string>  机型: </string>
                     </property>
                    </widget>
                   </item>
@@ -360,6 +424,11 @@ font-size:14pt;
                       <width>120</width>
                       <height>30</height>
                      </size>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">QComboBox{
+	border:1px solid rgb(173, 175, 191);
+}</string>
                     </property>
                    </widget>
                   </item>
@@ -563,7 +632,14 @@ font-size:14pt;
            <number>15</number>
           </property>
           <item>
-           <widget class="QTableView" name="tableView_2"/>
+           <widget class="QTableView" name="mainTable">
+            <property name="styleSheet">
+             <string notr="true">QTableView
+{
+	border:0px;
+}</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -621,7 +697,14 @@ font-size:14pt;
              </widget>
             </item>
             <item>
-             <widget class="QTableView" name="tableView"/>
+             <widget class="QTableView" name="positiveTable">
+              <property name="styleSheet">
+               <string notr="true">QTableView
+{
+	border:0px;
+}</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>

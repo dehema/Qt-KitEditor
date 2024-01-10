@@ -1,0 +1,84 @@
+﻿{
+    "AbbrName": "MultiFluoInfo",
+    "Barcode": "MultiFluoInfo-E015",
+    "Dosage": 20,
+    "Filetype": "KitInfo",
+    "FullName": "E015荧光通道定义",
+    "DistillFile": "Pool12_6_2_Distill",
+    "AmpFile": "AqcFluotest",
+    "KitType": "E015",
+    "SpoolList": [
+        {
+            "AbbrName": "CY3",
+            "CtMax": 45,
+            "CtMin": 21,
+            "CurveColor": "chocolate",
+            "DatumMax": 20,
+            "DatumMin": 10,
+            "FullName": "通道1(CY3)",
+            "PoolIndex": 0,
+            "SpecimenNo": 1,
+            "SpecimenType": 1
+        },
+        {
+            "AbbrName": "blank",
+            "CtMax": 40,
+            "CtMin": 21,
+            "CurveColor": "crimson",
+            "DatumMax": 20,
+            "DatumMin": 10,
+            "FullName": "通道2(BLANK)",
+            "PoolIndex": 1,
+            "SpecimenNo": 2,
+            "SpecimenType": 1
+        },
+        {
+            "AbbrName": "FAM",
+            "CtMax": 45,
+            "CtMin": 21,
+            "CurveColor": "lime",
+            "DatumMax": 20,
+            "DatumMin": 10,
+            "FullName": "通道3(FAM)",
+            "PoolIndex": 2,
+            "SpecimenNo": 3,
+            "SpecimenType": 1
+        },
+        {
+            "AbbrName": "ROX",
+            "CtMax": 45,
+            "CtMin": 21,
+            "CurveColor": "gold",
+            "DatumMax": 20,
+            "DatumMin": 10,
+            "FullName": "通道4(ROX)",
+            "PoolIndex": 3,
+            "SpecimenNo": 4,
+            "SpecimenType": 1
+        },
+        {
+            "AbbrName": "CY5",
+            "CtMax": 45,
+            "CtMin": 21,
+            "CurveColor": "magenta",
+            "DatumMax": 20,
+            "DatumMin": 10,
+            "FullName": "通道5(CY5)",
+            "PoolIndex": 4,
+            "SpecimenNo": 5,
+            "SpecimenType": 1
+        },
+        {
+            "AbbrName": "VIC",
+            "CtMax": 45,
+            "CtMin": 19,
+            "CurveColor": "mediumblue",
+            "DatumMax": 18,
+            "DatumMin": 10,
+            "FullName": "通道6(VIC)",
+            "PoolIndex": 5,
+            "SpecimenNo": 6,
+            "SpecimenType": 1
+        }
+    ]
+}
