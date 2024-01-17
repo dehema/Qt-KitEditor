@@ -1,4 +1,4 @@
-#ifndef KITEDITOR_H
+﻿#ifndef KITEDITOR_H
 #define KITEDITOR_H
 
 #include <QDebug>
@@ -6,7 +6,6 @@
 #include <QFileDialog>
 #include <QStandardItemModel>
 #include "KitMgr.h"
-#include "kitmodel.h"
 
 namespace Ui {
 class KitEditor;
@@ -24,6 +23,7 @@ private slots:
     void on_btOpenFile_clicked();
     //读取json
     void onLoadJsonFile(QByteArray _byteArray);
+    void slot_onclickColor();
 
 private:
     Ui::KitEditor *ui;
@@ -31,6 +31,7 @@ private:
     KitModel kitData;
     //表格数据
     QStandardItemModel* modelMain;
+    void addComboBoxToTable(int _rowIndex);
 };
 
 #endif // KITEDITOR_H

@@ -1,4 +1,4 @@
-#include "kiteditorview.h"
+﻿#include "kiteditorview.h"
 #include "ui_kiteditorview.h".h"
 
 KitEditorView::KitEditorView(QWidget *parent) :
@@ -8,17 +8,35 @@ KitEditorView::KitEditorView(QWidget *parent) :
     ui->setupUi(this);
 
 
-    QStandardItemModel* modelMain = new QStandardItemModel();
+    modelMain = new QStandardItemModel();
     QStringList headerMain;
-    headerMain<<"序号"<<"通道"<<"指标类型"<<"指标"<<"ct下限"<<"ct上限"<<"基线下限"<<"基线上限"<<"阈值"<<"颜色";
+    headerMain << QString::fromLocal8Bit("序号");
+    headerMain << QString::fromLocal8Bit("探针染料");
+    headerMain << QString::fromLocal8Bit("指标类型");
+    headerMain << QString::fromLocal8Bit("指标");
+    headerMain << QString::fromLocal8Bit("ct下限");
+    headerMain << QString::fromLocal8Bit("ct上限");
+    headerMain << QString::fromLocal8Bit("基线下限");
+    headerMain << QString::fromLocal8Bit("基线上限");
+    headerMain << QString::fromLocal8Bit("颜色");
     modelMain->setHorizontalHeaderLabels(headerMain);
+    ui->mainTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->mainTable->setModel(modelMain);
-
+    ui->mainTable->resizeRowsToContents();
+    ui->mainTable->resizeColumnsToContents();
+    ui->mainTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->mainTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->mainTable->setSelectionMode (QAbstractItemView::SingleSelection);
+    ui->mainTable->verticalHeader()->setHidden(true);
 
     QStandardItemModel* modelPosi = new QStandardItemModel();
     QStringList headerPosi;
-    headerPosi<<"序号"<<"指标"<<"ct上限"<<"阈值";
+    headerPosi << QString::fromLocal8Bit("序号");
+    headerPosi << QString::fromLocal8Bit("指标");
+    headerPosi << QString::fromLocal8Bit("阳性质控ct上限");
+    headerPosi << QString::fromLocal8Bit("阴性质控ct下限");
     modelPosi->setHorizontalHeaderLabels(headerPosi);
+    ui->positiveTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->positiveTable->setModel(modelPosi);
 }
 
@@ -49,19 +67,68 @@ void KitEditorView::on_btOpenFile_clicked()
 
 void KitEditorView::onLoadJsonFile(QByteArray _byteArray)
 {
-    KitModel kitData = KitMgr::ins().getProcedureListByData(_byteArray);
-    for(SpoolModel spoolModel:kitData.spoolList)
-    {
-        QList<QStandardItem> itemList;
-        itemList.append(QStandardItem(QString(spoolModel.poolIndex)));
-        itemList.append(QStandardItem(spoolModel.aisle));
-        itemList.append(QStandardItem(QString(spoolModel.specimenType)));
-        itemList.append(QStandardItem(QString(spoolModel.specimenNo)));
-        itemList.append(QStandardItem(QString(spoolModel.ctMin)));
-        itemList.append(QStandardItem(QString(spoolModel.ctMax)));
-        itemList.append(QStandardItem(QString(spoolModel.datumMin)));
-        itemList.append(QStandardItem(QString(spoolModel.datumMax)));
-        itemList.append(QStandardItem(spoolModel.curveColor));
-        modelMain->appendRow(itemList);
+    while (modelMain->rowCount() > 0) {
+        modelMain->removeRow(0);
     }
+    KitModel kitData = KitMgr::ins().getProcedureListByData(_byteArray);
+    modelMain->setRowCount(kitData.spoolList.length());
+    for(int i = 0;i<kitData.spoolList.length();i++)
+    {
+        SpoolModel spoolModel = kitData.spoolList[i];
+        QList<QStandardItem*> itemList;
+        //序号
+        QLabel* lbIndex = new QLabel(QString::number(spoolModel.poolIndex));
+        lbIndex->setAlignment(Qt::AlignCenter);
+        lbIndex->setStyleSheet("background-color:white;border:0px;");
+        ui->mainTable->setIndexWidget(modelMain->index(i,0), lbIndex);
+        //通道
+        QComboBox* cbAbbrName = new QComboBox(this);
+        cbAbbrName->addItem(spoolModel.abbrName);
+        cbAbbrName->setStyleSheet("background-color:white;border:0px;");
+        ui->mainTable->setIndexWidget(modelMain->index(i,1), cbAbbrName);
+        //指标类型
+
+        QComboBox* cbSpecimenType = new QComboBox(this);
+        cbSpecimenType->addItem(spoolModel.abbrName);
+        cbSpecimenType->setStyleSheet("background-color:white;border:0px;");
+        ui->mainTable->setIndexWidget(modelMain->index(i,2), cbSpecimenType);
+//        itemList<<new QStandardItem(QString::number(spoolModel.specimenType));
+//        //指标
+//        itemList<<new QStandardItem(spoolModel.fullName);
+//        //ct下限
+//        itemList<<new QStandardItem(QString::number(spoolModel.ctMin));
+//        //ct上限
+//        itemList<<new QStandardItem(QString::number(spoolModel.ctMax));
+//        //基线下限
+//        itemList<<new QStandardItem(QString::number(spoolModel.datumMin));
+//        //基线上限
+//        itemList<<new QStandardItem(QString::number(spoolModel.datumMax));
+//        modelMain->appendRow(itemList);
+//        QLabel* lb = new QLabel(QString::number(spoolModel.poolIndex));
+//        lb->setAlignment(Qt::AlignCenter);
+//        ui->mainTable->setIndexWidget(modelMain->index(i,0), lb);
+        //颜色
+        QPushButton* btColor= new QPushButton(ui->mainTable);
+        btColor->setObjectName(QString("btColor") + QString::number(i));
+        btColor->setStyleSheet(QString("background-color:rgba(%1,255);border:0px;border-radius:0px;").arg(spoolModel.curveColor));
+        connect(btColor,SIGNAL(clicked()),this,SLOT(slot_onclickColor()));
+        ui->mainTable->setIndexWidget(modelMain->index(i,8), btColor);
+    }
+    for(int rowIndex = 0;rowIndex < modelMain->rowCount();rowIndex++)
+    {
+        ui->mainTable->setRowHeight(rowIndex,35);
+    }
+
+}
+void KitEditorView::addComboBoxToTable(int _rowIndex)
+{
+    QComboBox *comboBox = new QComboBox();
+    comboBox->addItem("x");
+    comboBox->addItem("y");
+//    ui->mainTable->setIndexWidget(QModelIndex(1,1), comboBox);
+}
+
+void KitEditorView::slot_onclickColor()
+{
+    qDebug()<<sender()->objectName();
 }

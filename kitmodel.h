@@ -1,4 +1,4 @@
-#ifndef KITMODEL_H
+﻿#ifndef KITMODEL_H
 #define KITMODEL_H
 
 #endif // KITMODEL_H
@@ -23,7 +23,7 @@ struct SpoolModel {
   int threshold;
   //曲线颜色
   QString curveColor;
-  //指标
+  //指标ID
   int specimenNo;
   //指标类型
   int specimenType;
@@ -37,21 +37,28 @@ struct KitModel
 {
 public:
     //表名 体系简称
-    QString abbrName;
+    QString abbrName = QString("");
     //条码编号
-    QString barcode;
+    QString barcode = QString("");
     //规格
-    int dosage;
+    int dosage = 0;
     //文件类型
-    QString filetype;
+    QString filetype = QString("");
     //全称（中文名）
-    QString fullName;
+    QString fullName = QString("");
     //先忽略
-    QString distillFile;
+    QString distillFile = QString("");
     //温控协议 扩增流程文件名称
-    QString ampFile;
+    QString ampFile = QString("");
     //通道
     QList<SpoolModel> spoolList;
     QList<SpoolModel> positiveSpoolList;
     QList<SpoolModel> negativeSpoolList;
+
+    KitModel()
+    {
+        spoolList = QList<SpoolModel>();
+        positiveSpoolList = QList<SpoolModel>();
+        negativeSpoolList = QList<SpoolModel>();
+    }
 };

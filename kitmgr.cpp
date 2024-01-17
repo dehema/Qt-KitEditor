@@ -1,7 +1,10 @@
-#include "kitmgr.h"
+﻿#include "kitmgr.h"
 
 KitMgr::KitMgr()
 {
+    normTypeStr = {"无", "普通", "内质控"};
+    configPath = "E:/Project/QT/KitEditor/data/Default.json";
+    filePath = "E:/Project/QT/KitEditor/data/kit/E015/";
 }
 
 KitModel KitMgr::getProcedureListByData(QByteArray _byteArray)
@@ -35,19 +38,60 @@ QList<SpoolModel> KitMgr::getSpoolModelsByValue(QJsonValue _jsonValue)
     {
         SpoolModel spool;
         QJsonObject obj = contentArray[i].toObject();
-        spool.abbrName = obj.value("abbrName").toString();
-        spool.fullName = obj.value("fullName").toString();
-        spool.ctMin = obj.value("ctMin").toInt();
-        spool.ctMax = obj.value("ctMax").toInt();
-        spool.datumMin = obj.value("datumMin").toInt();
-        spool.datumMax = obj.value("datumMin").toInt();
-        spool.threshold = obj.value("threshold").toInt();
-        spool.curveColor = obj.value("curveColor").toString();
-        spool.specimenNo = obj.value("specimenNo").toInt();
-        spool.specimenType = obj.value("specimenType").toInt();
-        spool.poolIndex = obj.value("poolIndex").toInt();
-        spool.aisle = obj.value("aisle").toString();
+        spool.abbrName = obj.take("AbbrName").toString();
+        spool.fullName = obj.take("FullName").toString();
+        spool.ctMin = obj.take("CtMin").toInt();
+        spool.ctMax = obj.take("CtMax").toInt();
+        spool.datumMin = obj.take("DatumMin").toInt();
+        spool.datumMax = obj.take("DatumMax").toInt();
+        spool.threshold = obj.take("Threshold").toInt();
+        spool.curveColor = obj.take("CurveColor").toString();
+        spool.specimenNo = obj.take("SpecimenNo").toInt();
+        spool.specimenType = obj.take("SpecimenType").toInt();
+        spool.poolIndex = obj.take("PoolIndex").toInt();
         list.append(spool);
     }
     return list;
+}
+
+void KitMgr::sortKitBySpecimenNo(KitModel _kitModel)
+{
+    sortSpoolBySpecimenNo(_kitModel.spoolList);
+    sortSpoolBySpecimenNo(_kitModel.positiveSpoolList);
+    sortSpoolBySpecimenNo(_kitModel.negativeSpoolList);
+}
+
+void KitMgr::sortSpoolBySpecimenNo(QList<SpoolModel> _spoolList)
+{
+    for(int i = 0;i<_spoolList.length();i++)
+    {
+        for(int j = i;j<_spoolList.length();j++)
+        if(_spoolList[j].specimenNo==i)
+        {
+            SpoolModel spoolModel = _spoolList.at(j);
+            _spoolList.removeAt(j);
+            _spoolList.insert(i,spoolModel);
+        }
+    }
+}
+
+void KitMgr::sortKitByPoolIndex(KitModel _kitModel)
+{
+    sortSpoolByPoolIndex(_kitModel.spoolList);
+    sortSpoolByPoolIndex(_kitModel.positiveSpoolList);
+    sortSpoolByPoolIndex(_kitModel.negativeSpoolList);
+}
+
+void KitMgr::sortSpoolByPoolIndex(QList<SpoolModel> _spoolList)
+{
+    for(int i = 0;i<_spoolList.length();i++)
+    {
+        for(int j = i;j<_spoolList.length();j++)
+        if(_spoolList[j].poolIndex==i)
+        {
+            SpoolModel spoolModel = _spoolList[j];
+            _spoolList.removeAt(j);
+            _spoolList.insert(i,spoolModel);
+        }
+    }
 }
