@@ -31,6 +31,22 @@ struct SpoolModel {
   int poolIndex;
   //通道
   QString aisle;
+
+  void copy(SpoolModel& target)
+  {
+      abbrName = target.abbrName;
+      fullName = target.fullName;
+      ctMin = target.ctMin;
+      ctMax = target.ctMax;
+      datumMin = target.datumMin;
+      datumMax = target.datumMax;
+      threshold = target.threshold;
+      curveColor = target.curveColor;
+      specimenNo = target.specimenNo;
+      specimenType = target.specimenType;
+      poolIndex = target.poolIndex;
+      aisle = target.aisle;
+  }
 };
 
 struct KitModel
@@ -60,5 +76,22 @@ public:
         spoolList = QList<SpoolModel>();
         positiveSpoolList = QList<SpoolModel>();
         negativeSpoolList = QList<SpoolModel>();
+    }
+
+    void copy(KitModel& target)
+    {
+        abbrName = target.abbrName;
+        barcode = target.barcode;
+        dosage = target.dosage;
+        filetype = target.filetype;
+        fullName = target.fullName;
+        distillFile = target.distillFile;
+        ampFile = target.ampFile;
+        for(int i = 0;i < target.spoolList.length();i++)
+        {
+            target.spoolList[i].copy(target.spoolList[i]);
+            target.positiveSpoolList[i].copy(target.positiveSpoolList[i]);
+            target.negativeSpoolList[i].copy(target.negativeSpoolList[i]);
+        }
     }
 };

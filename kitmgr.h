@@ -8,6 +8,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QDebug>
 #include "Single.h"
 #include "kitmodel.h"
 
@@ -21,6 +22,21 @@ enum NormType {
   internal,
 };
 
+struct KitEditorParamsList
+{
+    QMap<QString,int> map;
+};
+
+struct KitEditorParams
+{
+    QString preview;
+    QMap<QString,KitEditorParamsList> list;
+    KitEditorParams()
+    {
+        preview = QString();
+    }
+};
+
 class KitMgr:public Single<KitMgr>
 {
 public:
@@ -29,7 +45,7 @@ public:
     QList<QString> normTypeStr;
     QString configPath;
     QString filePath;
-
+    KitModel kitConfig;
 
     KitModel getProcedureListByData(QByteArray _byteArray);
     QList<SpoolModel> getSpoolModelsByValue(QJsonValue _jsonValue);
@@ -38,6 +54,12 @@ public:
     //根据指标PoolID排序
     void sortKitByPoolIndex(KitModel kitModel);
     void sortSpoolByPoolIndex(QList<SpoolModel> spoolModel);
+    KitEditorParams getKitEditorParams(QString _params);
+
+    QString getKitJsonStr(KitModel _kitModel);
+    QJsonArray getSpoolJsonArray(QList<SpoolModel> _spoolModel);
+private:
+    void loadKitConfig();
 };
 
 #endif // KITMGR_H

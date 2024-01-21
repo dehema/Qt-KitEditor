@@ -27,14 +27,14 @@ QMAKE_LFLAGS_RELEASE = /DEBUG /INCREMENTAL:NOINGS
 
 SOURCES += \
     main.cpp \
-    kiteditorview.cpp \
-    kitmgr.cpp
+    kitmgr.cpp \
+    kiteditorview.cpp
 
 HEADERS += \
-    kiteditorview.h \
     single.h \
     kitmgr.h \
-    kitmodel.h
+    kitmodel.h \
+    kiteditorview.h
 
 FORMS += \
     kiteditorview.ui
