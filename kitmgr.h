@@ -9,7 +9,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QDebug>
-#include "Single.h"
+#include "single.h"
 #include "kitmodel.h"
 
 //指标类型
@@ -49,11 +49,12 @@ public:
 
     KitModel getProcedureListByData(QByteArray _byteArray);
     QList<SpoolModel> getSpoolModelsByValue(QJsonValue _jsonValue);
-    void sortKitBySpecimenNo(KitModel kitModel);
-    void sortSpoolBySpecimenNo(QList<SpoolModel> spoolModel);
+    //根据指标SpecimenNo排序
+    void sortKitBySpecimenNo(KitModel& kitModel);
+    void sortSpoolBySpecimenNo(QList<SpoolModel>& spoolModel);
     //根据指标PoolID排序
-    void sortKitByPoolIndex(KitModel kitModel);
-    void sortSpoolByPoolIndex(QList<SpoolModel> spoolModel);
+    void sortKitByPoolIndex(KitModel& kitModel);
+    void sortSpoolByPoolIndex(QList<SpoolModel>& spoolModel);
     KitEditorParams getKitEditorParams(QString _params);
 
     QString getKitJsonStr(KitModel _kitModel);

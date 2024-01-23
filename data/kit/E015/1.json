@@ -7,26 +7,9 @@
     "Filetype": "KitInfo",
     "FullName": "REF1060167流感病毒检测试剂盒16人份22",
     "NegativeList": [
-    ],
-    "PositiveList": [
-    ],
-    "SpoolList": [
-        {
-            "AbbrName": "FAM",
-            "CtMax": 45,
-            "CtMin": 40,
-            "CurveColor": "184,134,11",
-            "DatumMax": 18,
-            "DatumMin": 13,
-            "FullName": "甲型流感病毒",
-            "PoolIndex": 2,
-            "SpecimenNo": 1,
-            "SpecimenType": 0,
-            "Threshold": 20
-        },
         {
             "AbbrName": "NED",
-            "CtMax": 45,
+            "CtMax": 0,
             "CtMin": 40,
             "CurveColor": "0,139,139",
             "DatumMax": 16,
@@ -38,8 +21,60 @@
             "Threshold": 20
         },
         {
+            "AbbrName": "CY5",
+            "CtMax": 0,
+            "CtMin": 40,
+            "CurveColor": "250,250,210",
+            "DatumMax": 17,
+            "DatumMin": 12,
+            "FullName": "鼻病毒1",
+            "PoolIndex": 1,
+            "SpecimenNo": 5,
+            "SpecimenType": 0,
+            "Threshold": 20
+        },
+        {
+            "AbbrName": "FAM",
+            "CtMax": 0,
+            "CtMin": 40,
+            "CurveColor": "184,134,11",
+            "DatumMax": 18,
+            "DatumMin": 13,
+            "FullName": "甲型流感病毒",
+            "PoolIndex": 2,
+            "SpecimenNo": 1,
+            "SpecimenType": 0,
+            "Threshold": 20
+        },
+        {
+            "AbbrName": "ROX",
+            "CtMax": 0,
+            "CtMin": 40,
+            "CurveColor": "47,79,79",
+            "DatumMax": 19,
+            "DatumMin": 14,
+            "FullName": "乙型流感病毒",
+            "PoolIndex": 3,
+            "SpecimenNo": 4,
+            "SpecimenType": 0,
+            "Threshold": 20
+        },
+        {
+            "AbbrName": "CY5.5",
+            "CtMax": 0,
+            "CtMin": 40,
+            "CurveColor": "255,20,147",
+            "DatumMax": 20,
+            "DatumMin": 15,
+            "FullName": "副流感病毒",
+            "PoolIndex": 4,
+            "SpecimenNo": 6,
+            "SpecimenType": 0,
+            "Threshold": 20
+        },
+        {
             "AbbrName": "JOE",
-            "CtMax": 45,
+            "CtMax": 0,
             "CtMin": 40,
             "CurveColor": "0,0,139",
             "DatumMax": 20,
@@ -49,10 +84,51 @@
             "SpecimenNo": 3,
             "SpecimenType": 0,
             "Threshold": 20
+        }
+    ],
+    "PositiveList": [
+        {
+            "AbbrName": "NED",
+            "CtMax": 0,
+            "CtMin": 40,
+            "CurveColor": "0,139,139",
+            "DatumMax": 16,
+            "DatumMin": 11,
+            "FullName": "腺病毒",
+            "PoolIndex": 0,
+            "SpecimenNo": 2,
+            "SpecimenType": 0,
+            "Threshold": 20
+        },
+        {
+            "AbbrName": "CY5",
+            "CtMax": 0,
+            "CtMin": 40,
+            "CurveColor": "250,250,210",
+            "DatumMax": 17,
+            "DatumMin": 12,
+            "FullName": "鼻病毒1",
+            "PoolIndex": 1,
+            "SpecimenNo": 5,
+            "SpecimenType": 0,
+            "Threshold": 20
+        },
+        {
+            "AbbrName": "FAM",
+            "CtMax": 0,
+            "CtMin": 40,
+            "CurveColor": "184,134,11",
+            "DatumMax": 18,
+            "DatumMin": 13,
+            "FullName": "甲型流感病毒",
+            "PoolIndex": 2,
+            "SpecimenNo": 1,
+            "SpecimenType": 0,
+            "Threshold": 20
         },
         {
             "AbbrName": "ROX",
-            "CtMax": 45,
+            "CtMax": 0,
             "CtMin": 40,
             "CurveColor": "47,79,79",
             "DatumMax": 19,
@@ -60,6 +136,47 @@
             "FullName": "乙型流感病毒",
             "PoolIndex": 3,
             "SpecimenNo": 4,
+            "SpecimenType": 0,
+            "Threshold": 20
+        },
+        {
+            "AbbrName": "CY5.5",
+            "CtMax": 0,
+            "CtMin": 40,
+            "CurveColor": "255,20,147",
+            "DatumMax": 20,
+            "DatumMin": 15,
+            "FullName": "副流感病毒",
+            "PoolIndex": 4,
+            "SpecimenNo": 6,
+            "SpecimenType": 0,
+            "Threshold": 20
+        },
+        {
+            "AbbrName": "JOE",
+            "CtMax": 0,
+            "CtMin": 40,
+            "CurveColor": "0,0,139",
+            "DatumMax": 20,
+            "DatumMin": 10,
+            "FullName": "人偏肺病毒",
+            "PoolIndex": 5,
+            "SpecimenNo": 3,
+            "SpecimenType": 0,
+            "Threshold": 20
+        }
+    ],
+    "SpoolList": [
+        {
+            "AbbrName": "NED",
+            "CtMax": 45,
+            "CtMin": 40,
+            "CurveColor": "0,139,139",
+            "DatumMax": 16,
+            "DatumMin": 11,
+            "FullName": "腺病毒",
+            "PoolIndex": 0,
+            "SpecimenNo": 2,
             "SpecimenType": 0,
             "Threshold": 20
         },
@@ -77,6 +194,32 @@
             "Threshold": 20
         },
         {
+            "AbbrName": "FAM",
+            "CtMax": 45,
+            "CtMin": 40,
+            "CurveColor": "184,134,11",
+            "DatumMax": 18,
+            "DatumMin": 13,
+            "FullName": "甲型流感病毒",
+            "PoolIndex": 2,
+            "SpecimenNo": 1,
+            "SpecimenType": 0,
+            "Threshold": 20
+        },
+        {
+            "AbbrName": "ROX",
+            "CtMax": 45,
+            "CtMin": 40,
+            "CurveColor": "47,79,79",
+            "DatumMax": 19,
+            "DatumMin": 14,
+            "FullName": "乙型流感病毒",
+            "PoolIndex": 3,
+            "SpecimenNo": 4,
+            "SpecimenType": 0,
+            "Threshold": 20
+        },
+        {
             "AbbrName": "CY5.5",
             "CtMax": 45,
             "CtMin": 40,
@@ -86,6 +229,19 @@
             "FullName": "副流感病毒",
             "PoolIndex": 4,
             "SpecimenNo": 6,
+            "SpecimenType": 0,
+            "Threshold": 20
+        },
+        {
+            "AbbrName": "JOE",
+            "CtMax": 45,
+            "CtMin": 40,
+            "CurveColor": "0,0,139",
+            "DatumMax": 20,
+            "DatumMin": 10,
+            "FullName": "人偏肺病毒",
+            "PoolIndex": 5,
+            "SpecimenNo": 3,
             "SpecimenType": 0,
             "Threshold": 20
         }

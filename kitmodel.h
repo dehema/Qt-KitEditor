@@ -15,9 +15,9 @@ struct SpoolModel {
   int ctMin;
   //ct上限
   int ctMax;
-  //基线下限
+  //基线起点
   int datumMin;
-  //基线上限
+  //基线终点
   int datumMax;
   //阈值
   int threshold;

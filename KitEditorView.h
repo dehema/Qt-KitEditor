@@ -21,12 +21,6 @@ public:
 
 private slots:
     void on_btOpenFile_clicked();
-    //读取json
-    void onLoadJsonFile(QByteArray _byteArray);
-    void initMainTable();
-    void initSubMainTable();
-    void initPositiveTable();
-    void initSubPositiveTable();
     void slot_onclickColor();
     void slot_onAbbrNameTypeIndexChange(QString _str);
     void slot_onSpecimenTypeIndexChange(int _index);
@@ -35,15 +29,13 @@ private slots:
     void slot_onPositiveCtMinTextChanged(QString _str);
     void slot_onPositiveCtMaxTextChanged(QString _str);
     void on_btCreatKit_clicked();
-
     void on_btCheckInfo_clicked();
-
     void on_btPushlish_clicked();
-
     void on_btSaveAs_clicked();
 
 private:
     Ui::KitEditor *ui;
+    QString currFilePath;
     //体系数据
     KitModel kitData;
     //表格数据
@@ -55,8 +47,18 @@ private:
     KitEditorParams tcpParams;
     QString machineID;
     //-----------------------------function-----------------------------
-    void addComboBoxToTable(int _rowIndex);
     KitModel getPublishKitModel();
+    QWidget* getWidgetMainTable(int _rowIndex,int _colIndex);
+    QWidget* getWidgetPositiveTable(int _rowIndex,int _colIndex);
+    //读取json
+    void onLoadJsonFile(QByteArray _byteArray);
+    void initMainTable();
+    void initSubMainTable(int _row,int _specimenType);
+    void fillBlankMainTable(int _row,int _col);
+    void initPositiveTable();
+    void initSubPositiveTable(int _row,int _specimenType);
+    void fillBlankPositiveTable(int _row,int _col);
+    void initMainTableData();
 };
 
 #endif // KITEDITOR_H

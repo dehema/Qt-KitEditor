@@ -67,14 +67,14 @@ QList<SpoolModel> KitMgr::getSpoolModelsByValue(QJsonValue _jsonValue)
     return list;
 }
 
-void KitMgr::sortKitBySpecimenNo(KitModel _kitModel)
+void KitMgr::sortKitBySpecimenNo(KitModel& _kitModel)
 {
     sortSpoolBySpecimenNo(_kitModel.spoolList);
     sortSpoolBySpecimenNo(_kitModel.positiveSpoolList);
     sortSpoolBySpecimenNo(_kitModel.negativeSpoolList);
 }
 
-void KitMgr::sortSpoolBySpecimenNo(QList<SpoolModel> _spoolList)
+void KitMgr::sortSpoolBySpecimenNo(QList<SpoolModel>& _spoolList)
 {
     for(int i = 0;i<_spoolList.length();i++)
     {
@@ -88,14 +88,14 @@ void KitMgr::sortSpoolBySpecimenNo(QList<SpoolModel> _spoolList)
     }
 }
 
-void KitMgr::sortKitByPoolIndex(KitModel _kitModel)
+void KitMgr::sortKitByPoolIndex(KitModel& _kitModel)
 {
     sortSpoolByPoolIndex(_kitModel.spoolList);
     sortSpoolByPoolIndex(_kitModel.positiveSpoolList);
     sortSpoolByPoolIndex(_kitModel.negativeSpoolList);
 }
 
-void KitMgr::sortSpoolByPoolIndex(QList<SpoolModel> _spoolList)
+void KitMgr::sortSpoolByPoolIndex(QList<SpoolModel>& _spoolList)
 {
     for(int i = 0;i<_spoolList.length();i++)
     {
