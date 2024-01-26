@@ -28,13 +28,19 @@ QMAKE_LFLAGS_RELEASE = /DEBUG /INCREMENTAL:NOINGS
 SOURCES += \
     main.cpp \
     kitmgr.cpp \
-    kiteditorview.cpp
+    kiteditorview.cpp \
+    kitcreatedialog.cpp \
+    kitchoosedialog.cpp
 
 HEADERS += \
     single.h \
     kitmgr.h \
     kitmodel.h \
-    kiteditorview.h
+    kiteditorview.h \
+    kitcreatedialog.h \
+    kitchoosedialog.h
 
 FORMS += \
-    kiteditorview.ui
+    kiteditorview.ui \
+    kitcreatedialog.ui \
+    kitchoosedialog.ui

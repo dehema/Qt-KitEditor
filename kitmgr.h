@@ -43,9 +43,9 @@ public:
     KitMgr();
 
     QList<QString> normTypeStr;
-    QString configPath;
-    QString filePath;
     KitModel kitConfig;
+    QString kitName;
+    QString machineID;
 
     KitModel getProcedureListByData(QByteArray _byteArray);
     QList<SpoolModel> getSpoolModelsByValue(QJsonValue _jsonValue);
@@ -59,8 +59,14 @@ public:
 
     QString getKitJsonStr(KitModel _kitModel);
     QJsonArray getSpoolJsonArray(QList<SpoolModel> _spoolModel);
-private:
     void loadKitConfig();
+
+    QString getConfigPath();
+    QString getPublishPath();
+
+private:
+    QString configPath;
+    QString filePath;
 };
 
 #endif // KITMGR_H

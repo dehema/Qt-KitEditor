@@ -1,0 +1,90 @@
+{
+	"AbbrName": "REF1060167E015",
+	"Barcode": "22222",
+	"Dosage": 30,
+	"Filetype": "KitInfo",
+	"FullName": "REF1060167流感病毒检测试剂盒16人份22",
+	"DistillFile": "",
+	"AmpFile": "XC1",
+	"KitType": "E015",
+	"SpoolList": [
+		{
+			"CurveColor": "brown",
+			"AbbrName": "Adv",
+			"FullName": "腺病毒",
+			"DatumMin": 10,
+			"DatumMax": 18,
+			"CtMin": 19,
+			"CtMax": 4512,
+			"Threshold": 201,
+			"SpecimenType": 1,
+			"SpecimenNo": 1,
+			"Aisle": "CY3"
+		},
+		{
+			"CurveColor": "cornflowerblue",
+			"AbbrName": "Rhv12",
+			"FullName": "鼻病毒1",
+			"DatumMin": 101,
+			"DatumMax": 201,
+			"CtMin": 211,
+			"CtMax": 1111,
+			"Threshold": 201,
+			"SpecimenType": 1,
+			"SpecimenNo": 1,
+			"Aisle": "blank"
+		},
+		{
+			"CurveColor": "aqua",
+			"AbbrName": "FluAdasd",
+			"FullName": "甲型流感病毒",
+			"DatumMin": 10,
+			"DatumMax": 20,
+			"CtMin": 21,
+			"CtMax": 4523,
+			"Threshold": 20,
+			"SpecimenType": 1,
+			"SpecimenNo": 1,
+			"Aisle": "FAM"
+		},
+		{
+			"CurveColor": "darkgoldenrod",
+			"AbbrName": "FluB",
+			"FullName": "乙型流感病毒",
+			"DatumMin": 10,
+			"DatumMax": 20,
+			"CtMin": 21,
+			"CtMax": 4523,
+			"Threshold": 20,
+			"SpecimenType": 0,
+			"SpecimenNo": 1,
+			"Aisle": "ROX"
+		},
+		{
+			"CurveColor": "darkgoldenrod",
+			"AbbrName": "Hpiv1",
+			"FullName": "副流感病毒",
+			"DatumMin": 10,
+			"DatumMax": 20,
+			"CtMin": 21,
+			"CtMax": 45,
+			"Threshold": 20,
+			"SpecimenType": 0,
+			"SpecimenNo": 1,
+			"Aisle": "CY5"
+		},
+		{
+			"CurveColor": "lightsalmon",
+			"AbbrName": "Hmpv111",
+			"FullName": "人偏肺病毒",
+			"DatumMin": 10,
+			"DatumMax": 20,
+			"CtMin": 21,
+			"CtMax": 45,
+			"Threshold": 20,
+			"SpecimenType": 0,
+			"SpecimenNo": 1,
+			"Aisle": "VIC"
+		}
+	]
+}

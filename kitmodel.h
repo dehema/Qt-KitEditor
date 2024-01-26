@@ -58,7 +58,7 @@ public:
     QString barcode = QString("");
     //规格
     int dosage = 0;
-    //文件类型
+    //文件类型 机型
     QString filetype = QString("");
     //全称（中文名）
     QString fullName = QString("");
@@ -89,9 +89,28 @@ public:
         ampFile = target.ampFile;
         for(int i = 0;i < target.spoolList.length();i++)
         {
-            target.spoolList[i].copy(target.spoolList[i]);
-            target.positiveSpoolList[i].copy(target.positiveSpoolList[i]);
-            target.negativeSpoolList[i].copy(target.negativeSpoolList[i]);
+
+
+        }
+        for(int i = 0;i < target.spoolList.length();i++)
+        {
+            spoolList[i].copy(target.spoolList[i]);
+        }
+        if(target.positiveSpoolList.length()>0)
+        {
+            for(int i = 0;i < target.positiveSpoolList.length();i++)
+            {
+                positiveSpoolList[i].copy(target.positiveSpoolList[i]);
+                negativeSpoolList[i].copy(target.negativeSpoolList[i]);
+            }
+        }
+        else
+        {
+            for(int i = 0;i < target.spoolList.length();i++)
+            {
+                positiveSpoolList[i].copy(target.spoolList[i]);
+                negativeSpoolList[i].copy(target.spoolList[i]);
+            }
         }
     }
 };

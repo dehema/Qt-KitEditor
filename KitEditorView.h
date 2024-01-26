@@ -24,7 +24,6 @@ private slots:
     void slot_onclickColor();
     void slot_onAbbrNameTypeIndexChange(QString _str);
     void slot_onSpecimenTypeIndexChange(int _index);
-    void slot_onFullNameTextChanged(QString _str);
     void slot_onCtTextChanged(QString _str);
     void slot_onPositiveCtMinTextChanged(QString _str);
     void slot_onPositiveCtMaxTextChanged(QString _str);
@@ -32,6 +31,11 @@ private slots:
     void on_btCheckInfo_clicked();
     void on_btPushlish_clicked();
     void on_btSaveAs_clicked();
+    void slot_onCreateNewKit(QString str);
+    void slot_onChooseKit(QString _machineID,QString _fileName);
+    void slot_onBrowserKit(QString _path);
+
+    void on_editKitName_textChanged(const QString &arg1);
 
 private:
     Ui::KitEditor *ui;
@@ -45,7 +49,6 @@ private:
     KitEditorParams kitFileParams;
     //参数 温控流程选项
     KitEditorParams tcpParams;
-    QString machineID;
     //-----------------------------function-----------------------------
     KitModel getPublishKitModel();
     QWidget* getWidgetMainTable(int _rowIndex,int _colIndex);
@@ -59,6 +62,11 @@ private:
     void initSubPositiveTable(int _row,int _specimenType);
     void fillBlankPositiveTable(int _row,int _col);
     void initMainTableData();
+    void openKitFile(QString _path);
+    void refreshUI();
+    void onAbbrNameTypeIndexChange(int _rowIndex,QString _str);
+    void onSpecimenTypeIndexChange(int _rowIndex,int _specimenType);
+    void setCurrFilePath(QString path);
 };
 
 #endif // KITEDITOR_H

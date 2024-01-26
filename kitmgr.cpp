@@ -5,14 +5,23 @@ KitMgr::KitMgr()
     normTypeStr << QString::fromLocal8Bit("无");
     normTypeStr << QString::fromLocal8Bit("普通");
     normTypeStr << QString::fromLocal8Bit("内质控");
-    configPath = "E:/Project/Qt/KitEditor/data/kit/E015/MultiFluoInfo.json";
-    filePath = "E:/Project/QT/KitEditor/data/kit/E015/";
-    loadKitConfig();
+    configPath = QString("E:/Project/Qt/KitEditor/data/kit/%1/MultiFluoInfo.json");
+    filePath = QString("E:/Project/QT/KitEditor/data/kit/%1/");
+}
+
+QString KitMgr::getConfigPath()
+{
+    return configPath.arg(machineID);
+}
+
+QString KitMgr::getPublishPath()
+{
+    return filePath.arg(machineID);
 }
 
 void KitMgr::loadKitConfig()
 {
-    QFile file(configPath);
+    QFile file(getConfigPath());
     if(file.open(QFile::ReadOnly))
     {
         QByteArray byteArray = file.readAll();

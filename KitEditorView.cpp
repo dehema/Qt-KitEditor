@@ -1,24 +1,27 @@
 ﻿#include "kiteditorview.h"
+#include "kitcreatedialog.h"
+#include "kitchoosedialog.h"
 #include "ui_kiteditorview.h"
 
 KitEditorView::KitEditorView(QString _kitFileParams,QString _tcpParams, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::KitEditor)
 {
+    setWindowFlags(Qt::CustomizeWindowHint|Qt::FramelessWindowHint);
     ui->setupUi(this);
     kitFileParams = KitMgr::ins().getKitEditorParams(_kitFileParams);
     tcpParams = KitMgr::ins().getKitEditorParams(_tcpParams);
 
-    kitFileParams.preview = "E015,REF1066547_E015";
+    kitFileParams.preview = "E015,REF1060167E015";
     KitEditorParamsList list1;
-    list1.map["REF1060167_E015"] = 0;
-    list1.map["REF1066547_E015"] = 1;
-    list1.map["REF1561661_E015"] = 0;
+    list1.map["REF1060167E015"] = 0;
+    list1.map["REF1060168E015"] = 1;
+    list1.map["REF1060169E015"] = 0;
     kitFileParams.list["E015"] = list1;
     KitEditorParamsList list2;
-    list2.map["REF1041231_E0161"] = 0;
-    list2.map["REF1041231_E0162"] = 1;
-    list2.map["REF1067891_E016"] = 0;
+    list2.map["REF1060167E015"] = 0;
+    list2.map["REF1060168E015"] = 1;
+    list2.map["REF1060169E015"] = 0;
     kitFileParams.list["E016"] = list2;
 
     KitEditorParamsList tcpList1;
@@ -32,7 +35,9 @@ KitEditorView::KitEditorView(QString _kitFileParams,QString _tcpParams, QWidget 
     tcpList2.map["XC3"] = 0;
     tcpParams.list["E016"] = tcpList2;
 
-    machineID = kitFileParams.preview.split(",")[0];
+    KitMgr::ins().machineID = kitFileParams.preview.split(",")[0];
+    KitMgr::ins().kitName = kitFileParams.preview.split(",")[1];
+    KitMgr::ins().loadKitConfig();
 
     //UI
     ui->editKitName->setValidator(new QRegExpValidator(QRegExp("[a-zA-Z0-9]+$")));
@@ -76,6 +81,20 @@ KitEditorView::KitEditorView(QString _kitFileParams,QString _tcpParams, QWidget 
     ui->positiveTable->setSelectionMode (QAbstractItemView::SingleSelection);
     ui->positiveTable->verticalHeader()->setHidden(true);
     ui->positiveTable->horizontalHeader()->setMinimumHeight(45);
+
+
+    QStringList kitFileList = kitFileParams.list.keys();
+    for(QString key:kitFileList)
+    {
+        ui->cbMachineType->addItem(key);
+    }
+    QMap<QString,int> tcpList = tcpParams.list.value(KitMgr::ins().machineID).map;
+    for(QString key:tcpList.keys())
+    {
+        ui->cbTCPType->addItem(key);
+    }
+    QString openFilePath = KitMgr::ins().getPublishPath() + KitMgr::ins().kitName + ".json";
+    openKitFile(openFilePath);
 }
 
 KitEditorView::~KitEditorView()
@@ -85,41 +104,40 @@ KitEditorView::~KitEditorView()
 
 void KitEditorView::on_btOpenFile_clicked()
 {
-    currFilePath = QFileDialog::getOpenFileName(this,QStringLiteral("选择配置文件"),KitMgr::ins().filePath,QStringLiteral("(*json);"));
-    ui->lbPath->setText(currFilePath);
-    if (!currFilePath.isEmpty())
+    kitChooseDialog* dialog = new kitChooseDialog(this,kitFileParams.list);
+    connect(dialog,SIGNAL(signal_onChooseKit(QString,QString)),this,SLOT(slot_onChooseKit(QString,QString)));
+    connect(dialog,SIGNAL(signal_onBrowserKit(QString)),this,SLOT(slot_onBrowserKit(QString)));
+    dialog->setWindowModality(Qt::WindowModal);
+    dialog->setFocus();
+    dialog->exec();
+}
+
+void KitEditorView::openKitFile(QString _path)
+{
+    QFile file(_path);
+    if(file.open(QFile::ReadOnly))
     {
-        QFile file(currFilePath);
-        if(file.open(QFile::ReadOnly))
-        {
-            QByteArray byteArray = file.readAll();
-            onLoadJsonFile(byteArray);
-            file.close();
-        }
-        else{
-            qDebug()<<"打开文件失败";
-        }
+        QByteArray byteArray = file.readAll();
+        onLoadJsonFile(byteArray);
+        setCurrFilePath(_path);
+        file.close();
     }
     else{
+        qDebug()<<"打开文件失败";
     }
 }
 
 void KitEditorView::onLoadJsonFile(QByteArray _byteArray)
 {
     kitData = KitMgr::ins().getProcedureListByData(_byteArray);
+    refreshUI();
+}
+
+void KitEditorView::refreshUI()
+{
     ui->editKitName->setText(kitData.abbrName);
     ui->editFullName->setText(kitData.fullName);
     ui->editDosage->setText(QString::number(kitData.dosage));
-    QStringList kitFileList = kitFileParams.list.keys();
-    for(QString key:kitFileList)
-    {
-        ui->cbMachineType->addItem(key);
-    }
-    QMap<QString,int> tcpList = tcpParams.list.value(machineID).map;
-    for(QString key:tcpList.keys())
-    {
-        ui->cbTCPType->addItem(key);
-    }
     initMainTable();
     initPositiveTable();
     initMainTableData();
@@ -132,20 +150,13 @@ void KitEditorView::initMainTableData()
         SpoolModel spoolModel = kitData.spoolList[_row];
         SpoolModel spoolConfig =KitMgr::ins().kitConfig.spoolList[_row];
         //探针染料
-        int abbrNameIndex = 0;
-        QStringList fullNameStringList = spoolConfig.fullName.split("/");
         QComboBox* cbAbbrName = dynamic_cast<QComboBox*>(getWidgetMainTable(_row, 1));
-        for(int j = 0;j < fullNameStringList.length();j++)
-        {
-            QString str = fullNameStringList[j];
-            cbAbbrName->addItem(str);
-            if(str == spoolModel.abbrName)
-                abbrNameIndex = j;
-        }
-        cbAbbrName->setCurrentIndex(abbrNameIndex);
+        onAbbrNameTypeIndexChange(_row, cbAbbrName->currentText());
         //指标类型
         QComboBox* cbSpecimenType = dynamic_cast<QComboBox*>(getWidgetMainTable(_row,2));
         cbSpecimenType->setCurrentIndex(spoolModel.specimenType);
+        connect(cbSpecimenType,SIGNAL(currentIndexChanged(int)),this,SLOT(slot_onSpecimenTypeIndexChange(int)));
+        onSpecimenTypeIndexChange(_row, cbSpecimenType->currentIndex());
     }
 }
 
@@ -165,6 +176,8 @@ QWidget* KitEditorView::getWidgetMainTable(int _rowIndex,int _colIndex)
         return ui->mainRoot->findChild<QWidget*>(QString("editDatumMin") + QString::number(_rowIndex));
     else if(_colIndex == 7)
         return ui->mainRoot->findChild<QWidget*>(QString("editDatumMax") + QString::number(_rowIndex));
+    else if(_colIndex == 8)
+        return ui->mainRoot->findChild<QPushButton*>(QString("btColor") + QString::number(_rowIndex));
     return nullptr;
 }
 
@@ -181,10 +194,11 @@ QWidget* KitEditorView::getWidgetPositiveTable(int _rowIndex,int _colIndex)
 
 void KitEditorView::initMainTable()
 {
-    while (modelMain->rowCount() > 0) {
-        modelMain->removeRow(0);
-    }
-    modelMain->setRowCount(kitData.spoolList.length());
+//    while (modelMain->rowCount() > 0) {
+//        modelMain->removeRow(0);
+//    }
+    if(modelMain->rowCount()==0)
+        modelMain->setRowCount(kitData.spoolList.length());
     for(int rowIndex = 0;rowIndex < modelMain->rowCount();rowIndex++)
     {
         ui->mainTable->setRowHeight(rowIndex,35);
@@ -194,30 +208,67 @@ void KitEditorView::initMainTable()
         SpoolModel spoolModel = kitData.spoolList[_row];
         SpoolModel spoolConfig =KitMgr::ins().kitConfig.spoolList[_row];
         //序号
-        QLabel* lbIndex = new QLabel(QString::number(_row + 1));
-        lbIndex->setAlignment(Qt::AlignCenter);
-        lbIndex->setStyleSheet("background-color:white;border:0px;");
-        ui->mainTable->setIndexWidget(modelMain->index(_row,0), lbIndex);
+        QWidget* w0 = getWidgetMainTable(_row,0);
+        if(w0 == nullptr)
+        {
+            QLabel* lbIndex = new QLabel(QString::number(_row + 1));
+            lbIndex->setAlignment(Qt::AlignCenter);
+            lbIndex->setStyleSheet("background-color:white;border:0px;");
+            ui->mainTable->setIndexWidget(modelMain->index(_row,0), lbIndex);
+        }
         //探针染料
-        QComboBox* cbAbbrName = new QComboBox(this);
-        cbAbbrName->setObjectName(QString("cbAbbrName") + QString::number(_row));
-        cbAbbrName->setStyleSheet("background-color:white;border:0px;");
-        ui->mainTable->setIndexWidget(modelMain->index(_row,1), cbAbbrName);
+        QWidget* w1 = getWidgetMainTable(_row,1);
+        QComboBox* cbAbbrName;
+        bool isNewAbbrName = false;
+        if(w1 == nullptr)
+        {
+            isNewAbbrName = true;
+            cbAbbrName = new QComboBox(this);
+            cbAbbrName->setObjectName(QString("cbAbbrName") + QString::number(_row));
+            cbAbbrName->setStyleSheet("background-color:white;border:0px;");
+            ui->mainTable->setIndexWidget(modelMain->index(_row,1), cbAbbrName);
+        }
+        else
+        {
+            cbAbbrName = dynamic_cast<QComboBox*>(w1);
+            disconnect(cbAbbrName,SIGNAL(currentIndexChanged(QString)),this,SLOT(slot_onAbbrNameTypeIndexChange(QString)));
+        }
+        int abbrNameIndex = 0;
+        QStringList fullNameStringList = spoolConfig.fullName.split("/");
+        cbAbbrName->clear();
+        for(int j = 0;j < fullNameStringList.length();j++)
+        {
+            QString str = fullNameStringList[j];
+            cbAbbrName->addItem(str);
+            if(str == spoolModel.abbrName)
+                abbrNameIndex = j;
+        }
+        cbAbbrName->setCurrentIndex(abbrNameIndex);
         connect(cbAbbrName,SIGNAL(currentIndexChanged(QString)),this,SLOT(slot_onAbbrNameTypeIndexChange(QString)));
         //指标类型
+        QWidget* w2 = getWidgetMainTable(_row,2);
+        if(w2 != nullptr)
+            delete w2;
         QComboBox* cbSpecimenType = new QComboBox(this);
         cbSpecimenType->setObjectName(QString("cbSpecimenType") + QString::number(_row));
         for(QString str:KitMgr::ins().normTypeStr)
             cbSpecimenType->addItem(str);
         cbSpecimenType->setStyleSheet("background-color:white;border:0px;");
         ui->mainTable->setIndexWidget(modelMain->index(_row,2), cbSpecimenType);
-        connect(cbSpecimenType,SIGNAL(currentIndexChanged(int)),this,SLOT(slot_onSpecimenTypeIndexChange(int)));
         //颜色
-        QPushButton* btColor= new QPushButton(ui->mainTable);
-        btColor->setObjectName(QString("btColor") + QString::number(_row));
+        QPushButton* btColor;
+        QWidget* w8 = getWidgetMainTable(_row,8);
+        if(w8 == nullptr)
+        {
+            btColor = new QPushButton(ui->mainTable);
+            btColor->setObjectName(QString("btColor") + QString::number(_row));
+            btColor->setStyleSheet(QString("background-color:rgba(%1,255);border:0px;border-radius:0px;margin:5px;").arg(spoolModel.curveColor));
+            connect(btColor,SIGNAL(clicked()),this,SLOT(slot_onclickColor()));
+            ui->mainTable->setIndexWidget(modelMain->index(_row,8), btColor);
+        }
+        else
+            btColor = dynamic_cast<QPushButton*>(w8);
         btColor->setStyleSheet(QString("background-color:rgba(%1,255);border:0px;border-radius:0px;margin:5px;").arg(spoolModel.curveColor));
-        connect(btColor,SIGNAL(clicked()),this,SLOT(slot_onclickColor()));
-        ui->mainTable->setIndexWidget(modelMain->index(_row,8), btColor);
     }
 }
 
@@ -251,7 +302,6 @@ void KitEditorView::initSubMainTable(int _row,int _specimenType)
         editFullName->setStyleSheet("background-color:white;border:0px;padding-left:5px;padding-right:5px;");
         editFullName->setValidator(new QRegExpValidator(QRegExp("[a-zA-Z0-9_]+$")));
         ui->mainTable->setIndexWidget(modelMain->index(_row, 3), editFullName);
-        connect(editFullName,SIGNAL(textChanged(QString)),this,SLOT(slot_onFullNameTextChanged(QString)));
         //基线起点
         QLineEdit* editDatumMin = new QLineEdit(this);
         editDatumMin->setObjectName(QString("editDatumMin") + QString::number(_row));
@@ -316,35 +366,48 @@ void KitEditorView::fillBlankMainTable(int _row,int _col)
 
 void KitEditorView::initPositiveTable()
 {
-    while (modelPositive->rowCount() > 0) {
-        modelPositive->removeRow(0);
-    }
-    modelPositive->setRowCount(kitData.spoolList.length());
+//    while (modelPositive->rowCount() > 0) {
+//        modelPositive->removeRow(0);
+//    }
+    if(modelPositive->rowCount()==0)
+        modelPositive->setRowCount(kitData.spoolList.length());
     for(int rowIndex = 0;rowIndex < modelPositive->rowCount();rowIndex++)
     {
         ui->positiveTable->setRowHeight(rowIndex,35);
     }
-    for(int i = 0;i<kitData.spoolList.length();i++)
+    for(int row = 0;row<kitData.spoolList.length();row++)
     {
-        SpoolModel spoolModel = kitData.spoolList[i];
+        SpoolModel spoolModel = kitData.spoolList[row];
         //序号
-        QLabel* lbIndex = new QLabel(QString::number(i + 1));
-        lbIndex->setAlignment(Qt::AlignCenter);
-        lbIndex->setStyleSheet("background-color:white;border:0px;");
-        ui->positiveTable->setIndexWidget(modelPositive->index(i,0), lbIndex);
+        QWidget* w0 = getWidgetPositiveTable(row,0);
+        if(w0 == nullptr)
+        {
+            QLabel* lbIndex = new QLabel(QString::number(row + 1));
+            lbIndex->setAlignment(Qt::AlignCenter);
+            lbIndex->setStyleSheet("background-color:white;border:0px;");
+            ui->positiveTable->setIndexWidget(modelPositive->index(row,0), lbIndex);
+        }
         //探针染料
-        QLabel* lbAbbrName = new QLabel(this);
-        QComboBox* cbAbbrName = dynamic_cast<QComboBox*>(getWidgetMainTable(i, 1));
-        lbAbbrName->setText(cbAbbrName->currentText());
-        lbAbbrName->setObjectName(QString("lbPositiveAbbrName") + QString::number(i));
-        lbAbbrName->setAlignment(Qt::AlignCenter);
-        lbAbbrName->setStyleSheet("background-color:white;border:0px;");
-        ui->positiveTable->setIndexWidget(modelPositive->index(i,1), lbAbbrName);
+        QWidget* w1 = getWidgetPositiveTable(row,1);
+        if(w1 == nullptr)
+        {
+            QLabel* lbPositiveAbbrName = new QLabel(this);
+            lbPositiveAbbrName->setObjectName(QString("lbPositiveAbbrName") + QString::number(row));
+            lbPositiveAbbrName->setAlignment(Qt::AlignCenter);
+            lbPositiveAbbrName->setStyleSheet("background-color:white;border:0px;");
+            ui->positiveTable->setIndexWidget(modelPositive->index(row,1), lbPositiveAbbrName);
+        }
     }
 }
 
 void KitEditorView::initSubPositiveTable(int _row,int _specimenType)
 {
+    QWidget* w2 = getWidgetPositiveTable(_row,2);
+    if(w2 != nullptr)
+        delete w2;
+    QWidget* w3 = getWidgetPositiveTable(_row,3);
+    if(w3 != nullptr)
+        delete w3;
     if(_specimenType >= NormType::normal)
     {
         SpoolModel spoolModel = kitData.spoolList[_row];
@@ -387,16 +450,22 @@ void KitEditorView::slot_onAbbrNameTypeIndexChange(QString _str)
 {
     QString indexStr = sender()->objectName().at(sender()->objectName().length()-1);
     int rowIndex = indexStr.toInt();
-    //质控 指标
-    QComboBox* cbPositiveAbbrName = dynamic_cast<QComboBox*>(getWidgetMainTable(rowIndex, 1));
-    QLabel* lbPositiveAbbrName = dynamic_cast<QLabel*>(getWidgetPositiveTable(rowIndex, 1));
-    lbPositiveAbbrName->setText(cbPositiveAbbrName->currentText());
+    onAbbrNameTypeIndexChange(rowIndex, indexStr);
+}
+
+void KitEditorView::onAbbrNameTypeIndexChange(int _rowIndex, QString _str)
+{
+    //探针染料 质控
+    QComboBox* cbPositiveAbbrName = dynamic_cast<QComboBox*>(getWidgetMainTable(_rowIndex, 1));
+    QString abbrName = cbPositiveAbbrName->currentText();
+    QLabel* lbPositiveAbbrName = dynamic_cast<QLabel*>(getWidgetPositiveTable(_rowIndex, 1));
+    lbPositiveAbbrName->setText(abbrName);
     //主表格 指标
-    QComboBox* cbAbbrName = dynamic_cast<QComboBox*>(getWidgetMainTable(rowIndex, 2));
+    QComboBox* cbAbbrName = dynamic_cast<QComboBox*>(getWidgetMainTable(_rowIndex, 2));
     int specimenType = cbAbbrName->currentIndex();
     if(specimenType >= NormType::normal)
     {
-        QLineEdit* edit = ui->mainRoot->findChild<QLineEdit*>(QString("editFullName") + QString::number(rowIndex));
+        QLineEdit* edit = ui->mainRoot->findChild<QLineEdit*>(QString("editFullName") + QString::number(_rowIndex));
         edit->setText(_str);
     }
 }
@@ -405,16 +474,13 @@ void KitEditorView::slot_onSpecimenTypeIndexChange(int _specimenType)
 {
     QString indexStr = sender()->objectName().at(sender()->objectName().length()-1);
     int rowIndex = indexStr.toInt();
-    initSubMainTable(rowIndex, _specimenType);
-    initSubPositiveTable(rowIndex, _specimenType);
+    onSpecimenTypeIndexChange(rowIndex,_specimenType);
 }
 
-void KitEditorView::slot_onFullNameTextChanged(QString _str)
+void KitEditorView::onSpecimenTypeIndexChange(int _rowIndex,int _specimenType)
 {
-    QString indexStr = sender()->objectName().at(sender()->objectName().length()-1);
-    int index = indexStr.toInt();
-    QLabel* label = ui->mainRoot->findChild<QLabel*>(QString("lbPositiveAbbrName") + QString::number(index));
-    label->setText(_str);
+    initSubMainTable(_rowIndex, _specimenType);
+    initSubPositiveTable(_rowIndex, _specimenType);
 }
 
 void KitEditorView::slot_onCtTextChanged(QString _str)
@@ -451,7 +517,34 @@ void KitEditorView::slot_onclickColor()
 
 void KitEditorView::on_btCreatKit_clicked()
 {
+    QStringList strList;
+    for(QString str:kitFileParams.list.keys())
+    {
+        strList.append(str);
+    }
+    kitCreateDialog* dialog = new kitCreateDialog(this,strList);
+    connect(dialog,SIGNAL(signal_onCreateNewKit(QString)),this,SLOT(slot_onCreateNewKit(QString)));
+    dialog->exec();
+}
 
+void KitEditorView::slot_onCreateNewKit(QString _str)
+{
+    KitMgr::ins().machineID = _str;
+    KitMgr::ins().loadKitConfig();
+    kitData.copy(KitMgr::ins().kitConfig);
+    refreshUI();
+}
+
+void KitEditorView::slot_onChooseKit(QString _machineID,QString _fileName)
+{
+    KitMgr::ins().machineID = _machineID;
+    QString openFilePath = KitMgr::ins().getPublishPath() + _fileName + ".json";
+    openKitFile(openFilePath);
+}
+
+void KitEditorView::slot_onBrowserKit(QString _path)
+{
+    openKitFile(_path);
 }
 
 void KitEditorView::on_btCheckInfo_clicked()
@@ -461,14 +554,28 @@ void KitEditorView::on_btCheckInfo_clicked()
 
 void KitEditorView::on_btPushlish_clicked()
 {
-
+    QFile file(currFilePath);
+    KitModel kitModel = getPublishKitModel();
+    QString str = KitMgr::ins().getKitJsonStr(kitModel);
+    string str1 = str.toStdString();
+    const char* ch = str1.data();
+    if(file.open(QIODevice::WriteOnly))
+    {
+        file.write(ch);
+        file.close();
+    //        JustShowWarningMsg(QString::fromLocal8Bit("提示"),QString::fromLocal8Bit("发布成功"));
+        qDebug()<<QString::fromLocal8Bit("发布至") + currFilePath;
+    }
+    else{
+        qDebug()<<QString::fromLocal8Bit("发布失败");
+    }
 }
 
 void KitEditorView::on_btSaveAs_clicked()
 {
     if(currFilePath.isEmpty())
         return;
-    QString filePath = QFileDialog::getSaveFileName(this,QStringLiteral("选择配置文件"),KitMgr::ins().filePath,QStringLiteral("(*json);"));
+    QString filePath = QFileDialog::getSaveFileName(this,QStringLiteral("选择配置文件"),KitMgr::ins().getPublishPath(),QStringLiteral("(*json);"));
     if(filePath.isEmpty())
         return;
     if(QFileInfo(filePath).suffix() != "json")
@@ -476,7 +583,6 @@ void KitEditorView::on_btSaveAs_clicked()
     QFile file(filePath);
     KitModel kitModel = getPublishKitModel();
     QString str = KitMgr::ins().getKitJsonStr(kitModel);
-    qDebug()<<str;
     string str1 = str.toStdString();
     const char* ch = str1.data();
     if(file.open(QIODevice::WriteOnly))
@@ -565,4 +671,15 @@ KitModel KitEditorView::getPublishKitModel()
     //排序
     KitMgr::ins().sortKitByPoolIndex(kitModel);
     return kitModel;
+}
+
+void KitEditorView::setCurrFilePath(QString _path)
+{
+    currFilePath = _path;
+    ui->lbPath->setText(currFilePath);
+}
+
+void KitEditorView::on_editKitName_textChanged(const QString &arg1)
+{
+    setCurrFilePath(KitMgr::ins().getPublishPath() + arg1 + ".json");
 }

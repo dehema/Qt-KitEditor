@@ -1,0 +1,83 @@
+﻿{
+    "AbbrName": "MultiFluoInfo",
+    "Barcode": "Q1606",
+    "Dosage": 20,
+    "Filetype": "KitInfo",
+    "FullName": "Q1606荧光通道定义",
+    "DistillFile": "Q1606_Distill",
+    "AmpFile": "Q1606_AmpFile",
+    "SpoolList": [
+        {
+            "AbbrName": "CY3",
+            "CtMax": 45,
+            "CtMin": 21,
+            "CurveColor": "186, 246, 124",
+            "DatumMax": 15,
+            "DatumMin": 5,
+            "FullName": "CY3/TAMA/NED",
+            "PoolIndex": 5,
+            "SpecimenNo": 2,
+            "SpecimenType": 1
+        },
+        {
+            "AbbrName": "CY5",
+            "CtMax": 40,
+            "CtMin": 21,
+            "CurveColor": "255,0,0",
+            "DatumMax": 15,
+            "DatumMin": 5,
+            "FullName": "CY5",
+            "PoolIndex": 1,
+            "SpecimenNo": 5,
+            "SpecimenType": 1
+        },
+        {
+            "AbbrName": "FAM",
+            "CtMax": 45,
+            "CtMin": 21,
+            "CurveColor": "0,0,255",
+            "DatumMax": 15,
+            "DatumMin": 5,
+            "FullName": "FAM",
+            "PoolIndex": 2,
+            "SpecimenNo": 1,
+            "SpecimenType": 1
+        },
+        {
+            "AbbrName": "ROX",
+            "CtMax": 45,
+            "CtMin": 21,
+            "CurveColor": "218, 89, 43",
+            "DatumMax": 15,
+            "DatumMin": 5,
+            "FullName": "ROX/TexRED",
+            "PoolIndex": 3,
+            "SpecimenNo": 4,
+            "SpecimenType": 1
+        },
+        {
+            "AbbrName": "CY55",
+            "CtMax": 45,
+            "CtMin": 21,
+            "CurveColor": "169, 27, 24",
+            "DatumMax": 15,
+            "DatumMin": 5,
+            "FullName": "CY5.5",
+            "PoolIndex": 4,
+            "SpecimenNo": 6,
+            "SpecimenType": 1
+        },
+        {
+            "AbbrName": "VIC",
+            "CtMax": 45,
+            "CtMin": 19,
+            "CurveColor": "0,255,0",
+            "DatumMax": 15,
+            "DatumMin": 5,
+            "FullName": "VIC/HEX/JOE",
+            "PoolIndex": 0,
+            "SpecimenNo": 3,
+            "SpecimenType": 1
+        }
+    ]
+}
