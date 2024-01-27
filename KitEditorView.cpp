@@ -91,7 +91,7 @@ KitEditorView::KitEditorView(QString _kitFileParams,QString _tcpParams, QWidget 
     QMap<QString,int> tcpList = tcpParams.list.value(KitMgr::ins().machineID).map;
     for(QString key:tcpList.keys())
     {
-        ui->cbTCPType->addItem(key);
+        ui->cbAmpFile->addItem(key);
     }
     QString openFilePath = KitMgr::ins().getPublishPath() + KitMgr::ins().kitName + ".json";
     openKitFile(openFilePath);
@@ -130,6 +130,7 @@ void KitEditorView::openKitFile(QString _path)
 void KitEditorView::onLoadJsonFile(QByteArray _byteArray)
 {
     kitData = KitMgr::ins().getProcedureListByData(_byteArray);
+    KitMgr::ins().sortPoolByConfigSpecimenNo(kitData);
     refreshUI();
 }
 
@@ -186,9 +187,9 @@ QWidget* KitEditorView::getWidgetPositiveTable(int _rowIndex,int _colIndex)
     if(_colIndex == 1)
         return ui->mainRoot->findChild<QLabel*>(QString("lbPositiveAbbrName") + QString::number(_rowIndex));
     else if(_colIndex == 2)
-        return ui->mainRoot->findChild<QWidget*>(QString("editPositiveCtMin") + QString::number(_rowIndex));
-    else if(_colIndex == 3)
         return ui->mainRoot->findChild<QWidget*>(QString("editPositiveCtMax") + QString::number(_rowIndex));
+    else if(_colIndex == 3)
+        return ui->mainRoot->findChild<QWidget*>(QString("editPositiveCtMin") + QString::number(_rowIndex));
     return nullptr;
 }
 
@@ -410,25 +411,26 @@ void KitEditorView::initSubPositiveTable(int _row,int _specimenType)
         delete w3;
     if(_specimenType >= NormType::normal)
     {
-        SpoolModel spoolModel = kitData.spoolList[_row];
-        //ct下限
-        QLineEdit* editCtMin = new QLineEdit(this);
-        editCtMin->setObjectName(QString("editPositiveCtMin") + QString::number(_row));
-        editCtMin->setText(QString("<") + QString::number(spoolModel.ctMin));
-        editCtMin->setMaxLength(3);
-        editCtMin->setStyleSheet("background-color:white;border:0px;padding-left:5px;padding-right:5px;");
-        editCtMin->setValidator(new QRegExpValidator(QRegExp("[0-9]+$")));
-        ui->positiveTable->setIndexWidget(modelPositive->index(_row,2), editCtMin);
-        connect(editCtMin,SIGNAL(textChanged(QString)),this,SLOT(slot_onPositiveCtMinTextChanged(QString)));
-        //ct上限
+        SpoolModel positiveSpool = kitData.positiveSpoolList[_row];
+        SpoolModel negativeSpool = kitData.negativeSpoolList[_row];
+        //阳性质控ct上限
         QLineEdit* editCtMax = new QLineEdit(this);
         editCtMax->setObjectName(QString("editPositiveCtMax") + QString::number(_row));
-        editCtMax->setText(QString(">") + QString::number(spoolModel.ctMax));
+        editCtMax->setText(QString("<") + QString::number(positiveSpool.ctMax));
         editCtMax->setMaxLength(3);
         editCtMax->setStyleSheet("background-color:white;border:0px;padding-left:5px;padding-right:5px;");
         editCtMax->setValidator(new QRegExpValidator(QRegExp("[0-9]+$")));
-        ui->positiveTable->setIndexWidget(modelPositive->index(_row,3), editCtMax);
+        ui->positiveTable->setIndexWidget(modelPositive->index(_row,2), editCtMax);
         connect(editCtMax,SIGNAL(textChanged(QString)),this,SLOT(slot_onPositiveCtMaxTextChanged(QString)));
+        //阴性质控ct下限
+        QLineEdit* editCtMin = new QLineEdit(this);
+        editCtMin->setObjectName(QString("editPositiveCtMin") + QString::number(_row));
+        editCtMin->setText(QString(">") + QString::number(negativeSpool.ctMin));
+        editCtMin->setMaxLength(3);
+        editCtMin->setStyleSheet("background-color:white;border:0px;padding-left:5px;padding-right:5px;");
+        editCtMin->setValidator(new QRegExpValidator(QRegExp("[0-9]+$")));
+        ui->positiveTable->setIndexWidget(modelPositive->index(_row,3), editCtMin);
+        connect(editCtMin,SIGNAL(textChanged(QString)),this,SLOT(slot_onPositiveCtMinTextChanged(QString)));
     }
     else
     {
@@ -450,7 +452,8 @@ void KitEditorView::slot_onAbbrNameTypeIndexChange(QString _str)
 {
     QString indexStr = sender()->objectName().at(sender()->objectName().length()-1);
     int rowIndex = indexStr.toInt();
-    onAbbrNameTypeIndexChange(rowIndex, indexStr);
+    QComboBox* cbAbbrName = dynamic_cast<QComboBox*>(getWidgetMainTable(rowIndex,1));
+    onAbbrNameTypeIndexChange(rowIndex, cbAbbrName->currentText());
 }
 
 void KitEditorView::onAbbrNameTypeIndexChange(int _rowIndex, QString _str)
@@ -533,6 +536,7 @@ void KitEditorView::slot_onCreateNewKit(QString _str)
     KitMgr::ins().loadKitConfig();
     kitData.copy(KitMgr::ins().kitConfig);
     refreshUI();
+    ui->editKitName->setText(QString());
 }
 
 void KitEditorView::slot_onChooseKit(QString _machineID,QString _fileName)
@@ -552,10 +556,20 @@ void KitEditorView::on_btCheckInfo_clicked()
 
 }
 
+bool KitEditorView::checkKitTips(KitModel _kitModel)
+{
+    QList<QString> tips = KitMgr::ins().checkKitTips(_kitModel);
+    for(QString tip:tips)
+        qDebug()<<tip;
+    return tips.isEmpty();
+}
+
 void KitEditorView::on_btPushlish_clicked()
 {
     QFile file(currFilePath);
     KitModel kitModel = getPublishKitModel();
+    if(!checkKitTips(kitModel))
+        return;
     QString str = KitMgr::ins().getKitJsonStr(kitModel);
     string str1 = str.toStdString();
     const char* ch = str1.data();
@@ -582,6 +596,8 @@ void KitEditorView::on_btSaveAs_clicked()
         filePath+=".json";
     QFile file(filePath);
     KitModel kitModel = getPublishKitModel();
+    if(!checkKitTips(kitModel))
+        return;
     QString str = KitMgr::ins().getKitJsonStr(kitModel);
     string str1 = str.toStdString();
     const char* ch = str1.data();
@@ -602,9 +618,10 @@ KitModel KitEditorView::getPublishKitModel()
     kitModel.filetype = KitMgr::ins().kitConfig.filetype;
     kitModel.fullName = ui->editFullName->text();
     kitModel.distillFile = KitMgr::ins().kitConfig.distillFile;
-    kitModel.ampFile = KitMgr::ins().kitConfig.ampFile;
+    kitModel.ampFile = ui->cbAmpFile->currentText();
     for(int i = 0;i < modelMain->rowCount();i++)
     {
+        //通道信息
         SpoolModel spool;
         SpoolModel spoolConfig = KitMgr::ins().kitConfig.spoolList[i];
         //
@@ -613,6 +630,10 @@ KitModel KitEditorView::getPublishKitModel()
         spool.abbrName = cbAbbrName->currentText();
         QComboBox* cbSpecimenType = dynamic_cast<QComboBox*>(ui->mainTable->indexWidget(modelMain->index(i,2)));
         spool.specimenType = cbSpecimenType->currentIndex();
+        if(spool.specimenType == NormType::unDefine)
+        {
+            spool.specimenNo = 0;
+        }
         if(spool.specimenType >= NormType::normal)
         {
             QLineEdit* editFullName = dynamic_cast<QLineEdit*>(ui->mainTable->indexWidget(modelMain->index(i,3)));
@@ -642,25 +663,26 @@ KitModel KitEditorView::getPublishKitModel()
         }
         kitModel.spoolList.append(spool);
 
-        //
+        //阳性质控上限
         SpoolModel spoolPositive;
         spoolPositive.copy(spool);
         if(spool.specimenType >= NormType::normal)
         {
-            QLineEdit* editPosiCtMax = dynamic_cast<QLineEdit*>(ui->positiveTable->indexWidget(modelPositive->index(i,2)));
-            spoolPositive.ctMax = editPosiCtMax->text().toInt();
+            QLineEdit* editPosiCtMax = dynamic_cast<QLineEdit*>(getWidgetPositiveTable(i,2));
+            spoolPositive.ctMax = editPosiCtMax->text().remove(0,1).toInt();
         }
         else
         {
             spoolPositive.ctMax = spoolConfig.ctMax;
         }
         kitModel.positiveSpoolList.append(spoolPositive);
+        //阴性质控下限
         SpoolModel spoolNegative;
         spoolNegative.copy(spool);
         if(spool.specimenType >= NormType::normal)
         {
-            QLineEdit* editNegaCtMin = dynamic_cast<QLineEdit*>(ui->positiveTable->indexWidget(modelPositive->index(i,3)));
-            spoolNegative.ctMin = editNegaCtMin->text().toInt();
+            QLineEdit* editNegaCtMin = dynamic_cast<QLineEdit*>(getWidgetPositiveTable(i,3));
+            spoolNegative.ctMin = editNegaCtMin->text().remove(0,1).toInt();
         }
         else
         {
@@ -668,8 +690,27 @@ KitModel KitEditorView::getPublishKitModel()
         }
         kitModel.negativeSpoolList.append(spoolNegative);
     }
+    //重新处理specimenNo字段，向前排序
+    KitMgr::ins().sortKitBySpecimenNo(kitModel);
+    int zeroSpecimenTypeIndex = 1;
+    for(SpoolModel& spoolModel:kitModel.spoolList)
+    {
+        if(spoolModel.specimenType != 0)
+        {
+            spoolModel.specimenNo = zeroSpecimenTypeIndex;
+            zeroSpecimenTypeIndex++;
+        }
+    }
     //排序
     KitMgr::ins().sortKitByPoolIndex(kitModel);
+    for(int i = 0;i < kitModel.spoolList.length();i++)
+    {
+        SpoolModel spoolModel = kitModel.spoolList[i];
+        SpoolModel positiveSpool = kitModel.positiveSpoolList[i];
+        SpoolModel negativeSpool = kitModel.negativeSpoolList[i];
+        positiveSpool.specimenNo = spoolModel.specimenNo;
+        negativeSpool.specimenNo = spoolModel.specimenNo;
+    }
     return kitModel;
 }
 

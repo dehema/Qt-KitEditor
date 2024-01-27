@@ -488,7 +488,7 @@ QPushButton:disabled {
 }</string>
                        </property>
                        <property name="maxLength">
-                        <number>50</number>
+                        <number>40</number>
                        </property>
                       </widget>
                      </item>
@@ -568,7 +568,7 @@ QPushButton:disabled {
                       </widget>
                      </item>
                      <item>
-                      <widget class="QComboBox" name="cbTCPType">
+                      <widget class="QComboBox" name="cbAmpFile">
                        <property name="minimumSize">
                         <size>
                          <width>120</width>
@@ -896,7 +896,7 @@ QTableView:item
               <number>10</number>
              </property>
              <item>
-              <layout class="QVBoxLayout" name="verticalLayout_4">
+              <layout class="QVBoxLayout" name="layoutBottom">
                <property name="spacing">
                 <number>0</number>
                </property>

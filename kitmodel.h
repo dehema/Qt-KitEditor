@@ -31,6 +31,8 @@ struct SpoolModel {
   int poolIndex;
   //通道
   QString aisle;
+  //探针染料
+  QList<QString> dyeList;
 
   void copy(SpoolModel& target)
   {

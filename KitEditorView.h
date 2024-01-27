@@ -67,6 +67,8 @@ private:
     void onAbbrNameTypeIndexChange(int _rowIndex,QString _str);
     void onSpecimenTypeIndexChange(int _rowIndex,int _specimenType);
     void setCurrFilePath(QString path);
+    //是否能通过校验
+    bool checkKitTips(KitModel _kitModel);
 };
 
 #endif // KITEDITOR_H

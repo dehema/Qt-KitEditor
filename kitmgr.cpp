@@ -26,7 +26,28 @@ void KitMgr::loadKitConfig()
     {
         QByteArray byteArray = file.readAll();
         kitConfig = getProcedureListByData(byteArray);
+        //探针染料选项
+        for(SpoolModel& spoolModel:kitConfig.spoolList)
+        {
+            for(QString dye:spoolModel.fullName.split("/"))
+            {
+                spoolModel.dyeList.append(dye);
+            }
+        }
+        sortKitBySpecimenNo(kitConfig);
     }
+}
+
+SpoolModel KitMgr::getSpoolFromConfigByAbbrName(QString _abbrName)
+{
+    for(SpoolModel spoolModel:kitConfig.spoolList)
+    {
+        if(spoolModel.dyeList.contains(_abbrName))
+        {
+            return spoolModel;
+        }
+    }
+    return SpoolModel();
 }
 
 KitModel KitMgr::getProcedureListByData(QByteArray _byteArray)
@@ -49,6 +70,25 @@ KitModel KitMgr::getProcedureListByData(QByteArray _byteArray)
         kit.negativeSpoolList = getSpoolModelsByValue(obj_root.value("NegativeList"));
     }
     return kit;
+}
+
+void KitMgr::sortPoolByConfigSpecimenNo(KitModel& _kitModel)
+{
+    for(int i = 0;i < kitConfig.spoolList.length();i++)
+    {
+        SpoolModel spoolConfig = kitConfig.spoolList[i];
+        for(int j = i;j < _kitModel.spoolList.length();j++)
+        {
+            SpoolModel spoolData = _kitModel.spoolList[j];
+            if(spoolConfig.dyeList.contains(spoolData.abbrName))
+            {
+                _kitModel.spoolList.removeAt(j);
+                _kitModel.spoolList.insert(i,spoolData);
+                continue;
+            }
+        }
+
+    }
 }
 
 QList<SpoolModel> KitMgr::getSpoolModelsByValue(QJsonValue _jsonValue)
@@ -181,4 +221,54 @@ QJsonArray KitMgr::getSpoolJsonArray(QList<SpoolModel> _spoolModelList)
         arraySpool.append(objSpool);
     }
     return arraySpool;
+}
+
+QList<QString> KitMgr::checkKitTips(KitModel _kitModel)
+{
+    QList<QString> tipsList;
+    if(_kitModel.abbrName.isEmpty())
+        tipsList.append(QString::fromLocal8Bit("试剂盒名称不能为空"));
+    if(!_kitModel.abbrName.isEmpty() && _kitModel.abbrName.at(0).isNumber())
+        tipsList.append(QString::fromLocal8Bit("试剂盒名称不能是数字开头"));
+    QRegExp regLetterNumber("[a-zA-Z0-9]+$");
+    if(!regLetterNumber.exactMatch(_kitModel.abbrName))
+        tipsList.append(QString::fromLocal8Bit("试剂盒名称只能由字母和数字组成"));
+    if(_kitModel.abbrName.length() > 20)
+        tipsList.append(QString::fromLocal8Bit("试剂盒名称长度不能超过20位"));
+    if(_kitModel.fullName.isEmpty())
+        tipsList.append(QString::fromLocal8Bit("试剂盒全称不能为空"));
+    if(_kitModel.fullName.length() > 40)
+        tipsList.append(QString::fromLocal8Bit("试剂盒全称长度不能超过40位"));
+    if(_kitModel.dosage <= 0)
+        tipsList.append(QString::fromLocal8Bit("反应体系必须大于0"));
+    if(_kitModel.ampFile.isEmpty())
+        tipsList.append(QString::fromLocal8Bit("未选择温控流程"));
+    for(int i = 0;i < _kitModel.spoolList.length();i++)
+    {
+        SpoolModel spoolData = _kitModel.spoolList[i];
+        int index = i + 1;
+        if(spoolData.fullName.isEmpty())
+            tipsList.append(QString::fromLocal8Bit("第%1通道指标不能为空").arg(index));
+        if(!spoolData.fullName.isEmpty() && spoolData.abbrName.at(0).isNumber())
+            tipsList.append(QString::fromLocal8Bit("第%1通道指标不能是数字开头").arg(index));
+        QRegExp regLetterNumberUnderline("^[A-Za-z0-9_.]+$");
+        if(!regLetterNumberUnderline.exactMatch(spoolData.abbrName))
+            tipsList.append(QString::fromLocal8Bit("第%1通道指标只能由字母、小数点、下划线和数字组成").arg(index));
+        if(spoolData.fullName.length() > 40)
+            tipsList.append(QString::fromLocal8Bit("第%1通道指标长度不能超过40位").arg(index));
+        if(spoolData.datumMin <= 0)
+            tipsList.append(QString::fromLocal8Bit("第%1通道基线起点必须大于0").arg(index));
+        if(spoolData.datumMax <= spoolData.datumMin)
+            tipsList.append(QString::fromLocal8Bit("第%1通道基线终点必须大于基线起点").arg(index));
+        if(spoolData.ctMin <= spoolData.datumMax)
+            tipsList.append(QString::fromLocal8Bit("第%1通道Ct下限必须大于基线终点").arg(index));
+        if(spoolData.ctMax <= spoolData.ctMin)
+            tipsList.append(QString::fromLocal8Bit("第%1通道Ct上限必须大于Ct下限").arg(index));
+        for(int j = i + 1;j < _kitModel.spoolList.length();j++)
+        {
+            if(spoolData.fullName == _kitModel.spoolList[j].fullName)
+            tipsList.append(QString::fromLocal8Bit("第%1通道名称不能与第%2通道名称一致").arg(index).arg(j+1));
+        }
+    }
+    return tipsList;
 }

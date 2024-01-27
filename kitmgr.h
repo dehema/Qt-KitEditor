@@ -9,6 +9,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QDebug>
+#include <QRegExp>
 #include "single.h"
 #include "kitmodel.h"
 
@@ -55,14 +56,18 @@ public:
     //根据指标PoolID排序
     void sortKitByPoolIndex(KitModel& kitModel);
     void sortSpoolByPoolIndex(QList<SpoolModel>& spoolModel);
+    //根据配置表里的SpecimenNo字段进行排序
+    void sortPoolByConfigSpecimenNo(KitModel& kitModel);
     KitEditorParams getKitEditorParams(QString _params);
 
     QString getKitJsonStr(KitModel _kitModel);
     QJsonArray getSpoolJsonArray(QList<SpoolModel> _spoolModel);
     void loadKitConfig();
+    SpoolModel getSpoolFromConfigByAbbrName(QString _abbrName);
 
     QString getConfigPath();
     QString getPublishPath();
+    QList<QString> checkKitTips(KitModel _kitModel);
 
 private:
     QString configPath;

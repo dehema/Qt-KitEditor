@@ -8,7 +8,7 @@
     "AmpFile": "Q1606_AmpFile",
     "SpoolList": [
         {
-            "AbbrName": "CY3",
+            "AbbrName": "NED",
             "CtMax": 45,
             "CtMin": 21,
             "CurveColor": "186, 246, 124",
@@ -62,7 +62,7 @@
             "CurveColor": "169, 27, 24",
             "DatumMax": 15,
             "DatumMin": 5,
-            "FullName": "CY5.5",
+            "FullName": "CY55",
             "PoolIndex": 4,
             "SpecimenNo": 6,
             "SpecimenType": 1
