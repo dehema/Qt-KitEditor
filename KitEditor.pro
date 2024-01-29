@@ -30,7 +30,8 @@ SOURCES += \
     kitmgr.cpp \
     kiteditorview.cpp \
     kitcreatedialog.cpp \
-    kitchoosedialog.cpp
+    kitchoosedialog.cpp \
+    kitcolordialog.cpp
 
 HEADERS += \
     single.h \
@@ -38,9 +39,11 @@ HEADERS += \
     kitmodel.h \
     kiteditorview.h \
     kitcreatedialog.h \
-    kitchoosedialog.h
+    kitchoosedialog.h \
+    kitcolordialog.h
 
 FORMS += \
     kiteditorview.ui \
     kitcreatedialog.ui \
-    kitchoosedialog.ui
+    kitchoosedialog.ui \
+    kitcolordialog.ui

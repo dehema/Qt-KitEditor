@@ -1,6 +1,7 @@
 ﻿#include "kiteditorview.h"
 #include "kitcreatedialog.h"
 #include "kitchoosedialog.h"
+#include "kitcolordialog.h"
 #include "ui_kiteditorview.h"
 
 KitEditorView::KitEditorView(QString _kitFileParams,QString _tcpParams, QWidget *parent) :
@@ -89,10 +90,14 @@ KitEditorView::KitEditorView(QString _kitFileParams,QString _tcpParams, QWidget 
         ui->cbMachineType->addItem(key);
     }
     QMap<QString,int> tcpList = tcpParams.list.value(KitMgr::ins().machineID).map;
+    //温控协议
     for(QString key:tcpList.keys())
     {
         ui->cbAmpFile->addItem(key);
     }
+    //协议列表 有一个就选唯一那个 没有或者有多个就增加一个空选中这个空
+    if(ui->cbAmpFile->count() == 0)
+        ui->cbAmpFile->insertItem(0,"");
     QString openFilePath = KitMgr::ins().getPublishPath() + KitMgr::ins().kitName + ".json";
     openKitFile(openFilePath);
 }
@@ -130,6 +135,13 @@ void KitEditorView::openKitFile(QString _path)
 void KitEditorView::onLoadJsonFile(QByteArray _byteArray)
 {
     kitData = KitMgr::ins().getProcedureListByData(_byteArray);
+    //如果温控协议列表没有这个选项则增加
+    int ampIndex = ui->cbAmpFile->findText(kitData.ampFile);
+    if(ampIndex==-1)
+    {
+        ui->cbAmpFile->addItem(kitData.ampFile);
+        ui->cbAmpFile->setCurrentIndex(ui->cbAmpFile->count()-1);
+    }
     KitMgr::ins().sortPoolByConfigSpecimenNo(kitData);
     refreshUI();
 }
@@ -139,6 +151,13 @@ void KitEditorView::refreshUI()
     ui->editKitName->setText(kitData.abbrName);
     ui->editFullName->setText(kitData.fullName);
     ui->editDosage->setText(QString::number(kitData.dosage));
+    int ampIndex = ui->cbAmpFile->findText(kitData.ampFile);
+    if(ampIndex>=0)
+        ui->cbAmpFile->setCurrentIndex(ampIndex);
+    ui->cbAmpFile->setCurrentText(kitData.ampFile);
+    int machineIndex = ui->cbMachineType->findText(kitData.filetype);
+    machineIndex = qMax(0,machineIndex);
+    ui->cbMachineType->setCurrentIndex(machineIndex);
     initMainTable();
     initPositiveTable();
     initMainTableData();
@@ -264,7 +283,7 @@ void KitEditorView::initMainTable()
             btColor = new QPushButton(ui->mainTable);
             btColor->setObjectName(QString("btColor") + QString::number(_row));
             btColor->setStyleSheet(QString("background-color:rgba(%1,255);border:0px;border-radius:0px;margin:5px;").arg(spoolModel.curveColor));
-            connect(btColor,SIGNAL(clicked()),this,SLOT(slot_onclickColor()));
+            connect(btColor,SIGNAL(clicked()),this,SLOT(slot_onclickSpoolColor()));
             ui->mainTable->setIndexWidget(modelMain->index(_row,8), btColor);
         }
         else
@@ -513,9 +532,24 @@ void KitEditorView::slot_onPositiveCtMaxTextChanged(QString _str)
     edit->setText(QString(">") + QString::number(ctVal));
 }
 
-void KitEditorView::slot_onclickColor()
+void KitEditorView::slot_onclickSpoolColor()
 {
-    qDebug()<<sender()->objectName();
+    QString name = sender()->objectName();
+    QChar charName = name.at(name.length()-1);
+    QString strIndex = QString(charName);
+    int index = strIndex.toInt();
+    kitColorDialog* dialog = new kitColorDialog(this,index);
+    connect(dialog,SIGNAL(signal_onChooseColor(int,QString)),this,SLOT(slot_onChooseColor(int,QString)));
+    dialog->exec();
+}
+
+void KitEditorView::slot_onChooseColor(int _spoolIndex, QString _spoolColor)
+{
+    qDebug()<< _spoolIndex;
+    qDebug()<< _spoolColor;
+    kitData.spoolList[_spoolIndex].curveColor = _spoolColor;
+    QPushButton* bt = dynamic_cast<QPushButton*>(getWidgetMainTable(_spoolIndex,8));
+    bt->setStyleSheet(QString("background-color:rgba(%1,255);border:0px;border-radius:0px;margin:5px;").arg(_spoolColor));
 }
 
 void KitEditorView::on_btCreatKit_clicked()
@@ -723,4 +757,10 @@ void KitEditorView::setCurrFilePath(QString _path)
 void KitEditorView::on_editKitName_textChanged(const QString &arg1)
 {
     setCurrFilePath(KitMgr::ins().getPublishPath() + arg1 + ".json");
+}
+
+void KitEditorView::on_cbMachineType_activated(const QString &arg1)
+{
+    KitMgr::ins().machineID = arg1;
+    setCurrFilePath(KitMgr::ins().getPublishPath() + ui->editKitName->text() + ".json");
 }

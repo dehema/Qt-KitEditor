@@ -68,10 +68,16 @@ public:
     QString getConfigPath();
     QString getPublishPath();
     QList<QString> checkKitTips(KitModel _kitModel);
+    //颜色列表
+    QMap<QString, QString> getColorOption();
+    //获取相反的颜色
+    QString getInverseFontColor(QString _color);
 
 private:
     QString configPath;
     QString filePath;
+    QString colorFilePath;
+    QMap<QString, QString> spoolColorMap;
 };
 
 #endif // KITMGR_H

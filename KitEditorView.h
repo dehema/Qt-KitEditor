@@ -21,7 +21,7 @@ public:
 
 private slots:
     void on_btOpenFile_clicked();
-    void slot_onclickColor();
+    void slot_onclickSpoolColor();
     void slot_onAbbrNameTypeIndexChange(QString _str);
     void slot_onSpecimenTypeIndexChange(int _index);
     void slot_onCtTextChanged(QString _str);
@@ -36,6 +36,9 @@ private slots:
     void slot_onBrowserKit(QString _path);
 
     void on_editKitName_textChanged(const QString &arg1);
+
+    void on_cbMachineType_activated(const QString &arg1);
+    void slot_onChooseColor(int spoolIndex,QString spoolColor);
 
 private:
     Ui::KitEditor *ui;

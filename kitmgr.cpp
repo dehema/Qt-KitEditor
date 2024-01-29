@@ -7,6 +7,7 @@ KitMgr::KitMgr()
     normTypeStr << QString::fromLocal8Bit("内质控");
     configPath = QString("E:/Project/Qt/KitEditor/data/kit/%1/MultiFluoInfo.json");
     filePath = QString("E:/Project/QT/KitEditor/data/kit/%1/");
+    colorFilePath = QString("E:/Project/QT/KitEditor/data/colors.json");
 }
 
 QString KitMgr::getConfigPath()
@@ -271,4 +272,41 @@ QList<QString> KitMgr::checkKitTips(KitModel _kitModel)
         }
     }
     return tipsList;
+}
+
+QMap<QString, QString> KitMgr::getColorOption()
+{
+    if(!spoolColorMap.isEmpty())
+        return spoolColorMap;
+    QFile file(colorFilePath);
+    if(file.open(QFile::ReadOnly))
+    {
+        QByteArray byteArray = file.readAll();
+        QJsonDocument jsonDocu = QJsonDocument::fromJson(byteArray);
+        if(jsonDocu.isObject())
+        {
+            QJsonObject obj_root = jsonDocu.object();
+            QJsonObject objColor = obj_root["colors"].toObject();
+            for(QString key:objColor.keys())
+            {
+                spoolColorMap[key] = objColor[key].toString();
+            }
+        }
+    }
+    return spoolColorMap;
+}
+
+
+QString KitMgr::getInverseFontColor(QString _color)
+{
+    QStringList colors = _color.split(",");
+    QString fontColor = QString("255,255,255");
+    int r = QString(colors[0]).toInt();
+    int g = QString(colors[1]).toInt();
+    int b = QString(colors[2]).toInt();
+    double darkness = 1 - (0.299 * r + 0.587 * g + 0.114 *b) / 255;
+    if (darkness < 0.5) {
+        fontColor = QString("0,0,0");
+    }
+    return fontColor;
 }
