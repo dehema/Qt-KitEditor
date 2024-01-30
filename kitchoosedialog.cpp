@@ -11,7 +11,7 @@ kitChooseDialog::kitChooseDialog(QWidget *parent, QMap<QString,KitEditorParamsLi
 
     ui->setupUi(this);
     ui->layoutMain->setAlignment(Qt::AlignCenter);
-    ui->layoutMain->setSpacing(0);
+    ui->layoutMain->setSpacing(10);
     int totalHeight = 0;
     for(QString machinedID:_kitEditorParamsList.keys())
     {
@@ -20,12 +20,13 @@ kitChooseDialog::kitChooseDialog(QWidget *parent, QMap<QString,KitEditorParamsLi
         lbMachinedID->setAlignment(Qt::AlignCenter);
         lbMachinedID->setStyleSheet("QLabel {"
         "   font-family:'思源黑体 CN Bold';"
-        "   font-size:22px;"
+        "   font-size:24px;"
         "   color: rgb(0, 160, 233); "
         "}");
-        lbMachinedID->setFixedHeight(60);
+        lbMachinedID->setFixedHeight(45);
+        totalHeight+=45;
+        totalHeight+=10;
         lbMachinedID->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Fixed);
-        totalHeight+=60;
         ui->layoutMain->addWidget(lbMachinedID, Qt::AlignCenter);
         for(QString fileName:_kitEditorParamsList[machinedID].map.keys())
         {
@@ -36,17 +37,23 @@ kitChooseDialog::kitChooseDialog(QWidget *parent, QMap<QString,KitEditorParamsLi
             ui->layoutMain->addWidget(bt, Qt::AlignCenter);
             bt->setMinimumSize(120,35);
             bt->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Fixed);
-            bt->setFixedHeight(40);
-            totalHeight+=40;
+            bt->setFixedHeight(35);
+            totalHeight+=35;
+            totalHeight+=10;
             bt->setStyleSheet("QPushButton {"
+                              "     background-color: rgb(0, 160, 234);"
+                              "     border-radius: 17px; "
+                              "     color: rgb(255, 255, 255); "
+                              "     border:0px solid rgb(0, 160, 234);"
                               "     font-family:'思源黑体 CN Normal';"
                               "     border-radius: 17px; "
-                              "     color: rgb(0, 160, 233); "
                               "     padding-left:10px;"
                               "     padding-right:10px;"
                               "}"
                               "QPushButton:hover {"
-                              "     color: rgb(246, 180, 43); "
+                              "     background-color: rgb(255, 255, 255);"
+                              "     color: rgb(0, 160, 234); "
+                              "     border:1px solid rgb(0, 160, 234);"
 //                              "     background: qradialgradient(cx:0.5, cy:0.5, radius: 0.5,fx:0.5, fy:0.5,stop:0 rgb(0,122,232),stop:1 rgb(53,190,246) ) "
                               "}"
                               "QPushButton:disabled { "

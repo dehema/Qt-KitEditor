@@ -10,7 +10,6 @@
 #include <QJsonDocument>
 #include <QDebug>
 #include <QRegExp>
-#include "single.h"
 #include "kitmodel.h"
 
 //指标类型
@@ -37,10 +36,16 @@ struct KitEditorParams
         preview = QString();
     }
 };
-
-class KitMgr:public Single<KitMgr>
+using namespace std;
+class KitMgr
 {
 public:
+    static KitMgr& ins()
+    {
+        static KitMgr instance;   //函数静态变量可以实现延时构造。
+        return instance;
+    }
+
     KitMgr();
 
     QList<QString> normTypeStr;
@@ -58,6 +63,8 @@ public:
     void sortSpoolByPoolIndex(QList<SpoolModel>& spoolModel);
     //根据配置表里的SpecimenNo字段进行排序
     void sortPoolByConfigSpecimenNo(KitModel& kitModel);
+    //根据通道数据获取到对应的显示位置
+    int getSpecimenNoByConfig(SpoolModel _spool);
     KitEditorParams getKitEditorParams(QString _params);
 
     QString getKitJsonStr(KitModel _kitModel);

@@ -92,6 +92,18 @@ void KitMgr::sortPoolByConfigSpecimenNo(KitModel& _kitModel)
     }
 }
 
+int KitMgr::getSpecimenNoByConfig(SpoolModel _spoolData)
+{
+    for(SpoolModel spoolModel:kitConfig.spoolList)
+    {
+        if(spoolModel.dyeList.contains(_spoolData.abbrName))
+        {
+            return spoolModel.specimenNo;
+        }
+    }
+    return 0;
+}
+
 QList<SpoolModel> KitMgr::getSpoolModelsByValue(QJsonValue _jsonValue)
 {
     QList<SpoolModel> list;
@@ -226,6 +238,7 @@ QJsonArray KitMgr::getSpoolJsonArray(QList<SpoolModel> _spoolModelList)
 
 QList<QString> KitMgr::checkKitTips(KitModel _kitModel)
 {
+    sortPoolByConfigSpecimenNo(_kitModel);
     QList<QString> tipsList;
     if(_kitModel.abbrName.isEmpty())
         tipsList.append(QString::fromLocal8Bit("试剂盒名称不能为空"));

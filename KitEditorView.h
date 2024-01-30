@@ -40,6 +40,8 @@ private slots:
     void on_cbMachineType_activated(const QString &arg1);
     void slot_onChooseColor(int spoolIndex,QString spoolColor);
 
+    void on_btClose_clicked();
+
 private:
     Ui::KitEditor *ui;
     QString currFilePath;

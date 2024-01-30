@@ -12,14 +12,14 @@ kitColorDialog::kitColorDialog(QWidget *parent,int _spoolIndex) :
     ui->setupUi(this);
 
     colorOption =  KitMgr::ins().getColorOption();
-    const int colCount = 5;
-    const int itemWidth = ui->widgetMain->rect().width()/colCount;
-    const int itemHeight = 40;
+    const int colCount = 4;
+    const int itemSize = 64;
     int itemCount = colorOption.keys().length();
-    const int rowCount = ceil((double)itemCount/5);
-    int contentHeight = rowCount * itemHeight;
-    ui->widgetMain->setFixedHeight(contentHeight);
-    ui->scrollAreaWidgetContents->setFixedHeight(contentHeight);
+    const int rowCount = ceil((double)itemCount/colCount);
+//    int contentHeight = rowCount * itemSize;
+//    ui->widgetMain->setFixedHeight(contentHeight);
+//    ui->scrollAreaWidgetContents->setFixedHeight(contentHeight);
+    ui->layoutMain->setSpacing(25);
     buttonGroup = new QButtonGroup();
     for(int i = 0;i < itemCount;i++)
     {
@@ -27,16 +27,17 @@ kitColorDialog::kitColorDialog(QWidget *parent,int _spoolIndex) :
         QString colorValue = colorOption[colorName];
         QPushButton* bt = new QPushButton(this);
         QString style = "background-color:rgb(%1);"
-                        "border-radius:0px;"
+                        "border-radius:%3px;"
                         "border:0px;"
                         "color:rgb(%2);"
                         "font-family:'思源黑体 CN Normal';"
                         "font-size:12pt;";
         style = style.arg(colorValue);
         style = style.arg(KitMgr::ins().getInverseFontColor(colorValue));
-        bt->setText(colorName);
+        style = style.arg(itemSize/2);
+//        bt->setText(colorName);
         bt->setStyleSheet(style);
-        bt->setFixedSize(itemWidth,itemHeight);
+        bt->setFixedSize(itemSize,itemSize);
         ui->layoutMain->addWidget(bt,i/colCount,i%colCount);
         buttonGroup->addButton(bt,buttonGroup->buttons().length());
     }

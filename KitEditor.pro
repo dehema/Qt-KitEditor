@@ -34,7 +34,6 @@ SOURCES += \
     kitcolordialog.cpp
 
 HEADERS += \
-    single.h \
     kitmgr.h \
     kitmodel.h \
     kiteditorview.h \

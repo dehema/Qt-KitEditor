@@ -501,6 +501,18 @@ void KitEditorView::slot_onSpecimenTypeIndexChange(int _specimenType)
 
 void KitEditorView::onSpecimenTypeIndexChange(int _rowIndex,int _specimenType)
 {
+    SpoolModel spoolConfig = KitMgr::ins().kitConfig.spoolList[_rowIndex];
+    SpoolModel spoolData = kitData.spoolList[_rowIndex];
+    if(_specimenType <= NormType::normal)
+    {
+        spoolData.ctMin = spoolConfig.ctMin;
+        spoolData.ctMax = spoolConfig.ctMax;
+    }
+    if(_specimenType <= NormType::unDefine)
+    {
+        spoolData.datumMin = spoolConfig.datumMin;
+        spoolData.datumMax = spoolConfig.datumMax;
+    }
     initSubMainTable(_rowIndex, _specimenType);
     initSubPositiveTable(_rowIndex, _specimenType);
 }
@@ -545,8 +557,6 @@ void KitEditorView::slot_onclickSpoolColor()
 
 void KitEditorView::slot_onChooseColor(int _spoolIndex, QString _spoolColor)
 {
-    qDebug()<< _spoolIndex;
-    qDebug()<< _spoolColor;
     kitData.spoolList[_spoolIndex].curveColor = _spoolColor;
     QPushButton* bt = dynamic_cast<QPushButton*>(getWidgetMainTable(_spoolIndex,8));
     bt->setStyleSheet(QString("background-color:rgba(%1,255);border:0px;border-radius:0px;margin:5px;").arg(_spoolColor));
@@ -587,7 +597,7 @@ void KitEditorView::slot_onBrowserKit(QString _path)
 
 void KitEditorView::on_btCheckInfo_clicked()
 {
-
+    checkKitTips(getPublishKitModel());
 }
 
 bool KitEditorView::checkKitTips(KitModel _kitModel)
@@ -613,6 +623,7 @@ void KitEditorView::on_btPushlish_clicked()
         file.close();
     //        JustShowWarningMsg(QString::fromLocal8Bit("提示"),QString::fromLocal8Bit("发布成功"));
         qDebug()<<QString::fromLocal8Bit("发布至") + currFilePath;
+        kitFileParams.list[KitMgr::ins().machineID].map[kitModel.abbrName] = 0;
     }
     else{
         qDebug()<<QString::fromLocal8Bit("发布失败");
@@ -623,7 +634,12 @@ void KitEditorView::on_btSaveAs_clicked()
 {
     if(currFilePath.isEmpty())
         return;
-    QString filePath = QFileDialog::getSaveFileName(this,QStringLiteral("选择配置文件"),KitMgr::ins().getPublishPath(),QStringLiteral("(*json);"));
+    QString filePath = QFileDialog::getSaveFileName(this,QStringLiteral("另存为"),QString(),QStringLiteral("(*json);"));
+    if(filePath.contains(QCoreApplication::applicationDirPath()))
+    {
+        qDebug()<<QString::fromLocal8Bit("不能保存至此目录");
+        return;
+    }
     if(filePath.isEmpty())
         return;
     if(QFileInfo(filePath).suffix() != "json")
@@ -763,4 +779,9 @@ void KitEditorView::on_cbMachineType_activated(const QString &arg1)
 {
     KitMgr::ins().machineID = arg1;
     setCurrFilePath(KitMgr::ins().getPublishPath() + ui->editKitName->text() + ".json");
+}
+
+void KitEditorView::on_btClose_clicked()
+{
+    close();
 }
