@@ -669,6 +669,7 @@ KitModel KitEditorView::getPublishKitModel()
     kitModel.fullName = ui->editFullName->text();
     kitModel.distillFile = KitMgr::ins().kitConfig.distillFile;
     kitModel.ampFile = ui->cbAmpFile->currentText();
+    int _specimenNo = 1;
     for(int i = 0;i < modelMain->rowCount();i++)
     {
         //通道信息
@@ -683,6 +684,11 @@ KitModel KitEditorView::getPublishKitModel()
         if(spool.specimenType == NormType::unDefine)
         {
             spool.specimenNo = 0;
+        }
+        else
+        {
+            spool.specimenNo = _specimenNo;
+            _specimenNo++;
         }
         if(spool.specimenType >= NormType::normal)
         {
